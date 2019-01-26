@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Bantay</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="google_maps_api">AIzaSyAh6_zn3hXM2mrD56tiSIRDI6wyGLy3yFA</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_map" />
+    <string name="nav_cctv" />
+    <string name="nav_request" />
+    <string name="nav_report" />
+    <string name="nav_account" />
+
+    <string-array name="barangay">
+        <item>Barangka</item>
+        <item>Calumpang</item>
+        <item>Concepcion Uno</item>
+        <item>Concepcion Dos</item>
+        <item>Fortune</item>
+        <item>Industrial Valley Complex</item>
+        <item>Jesus Dela Peña</item>
+        <item>Malanday</item>
+        <item>Marikina Heights</item>
+        <item>Nangka</item>
+        <item>Parang</item>
+        <item>San Roque</item>
+        <item>Sta. Elena</item>
+        <item>Santo Niño</item>
+        <item>Tañong</item>
+        <item>Tumana</item>
+    </string-array>
+</resources>
