@@ -37,7 +37,7 @@ public class EditAccountFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
   //  private String emailVar;
-    String path = "/Users";
+    String path = "/Users/Residents";
 
 
 

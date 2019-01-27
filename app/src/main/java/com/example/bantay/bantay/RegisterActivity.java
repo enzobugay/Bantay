@@ -167,7 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     //Account details to database
     private void sendUserData(){
-        String path = "/Users";
+        String path = "/Users/Residents"; //Database path
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
         AccountDetails accountDetails = new AccountDetails(fname, lname, addressb, cnumber, ubarangay, email);

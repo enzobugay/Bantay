@@ -89,7 +89,7 @@ public class AccountFragment extends Fragment {
         profilenumber = (TextView)getView().findViewById(R.id.tvcontactnumber);
         profileemail = (TextView)getView().findViewById(R.id.tvemail);
 
-        String path = "/Users";
+        String path = "/Users/Residents";
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
