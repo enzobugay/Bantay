@@ -35,7 +35,6 @@ public class AccountFragment extends Fragment {
     private TextView profilefirstname, profilelastname, profileaddress, profilebarangay, profilenumber, profileemail;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-    private Firebase UserRootRef;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -49,7 +48,7 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         //Edit Account Button
-        Button edit = (Button)view.findViewById(R.id.editaccountbutton);
+        Button edit = view.findViewById(R.id.editaccountbutton);
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +57,7 @@ public class AccountFragment extends Fragment {
         });
 
         //Logout Button
-        Button logout = (Button)view.findViewById(R.id.logoutbutton);
+        Button logout = view.findViewById(R.id.logoutbutton);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +74,6 @@ public class AccountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Firebase.setAndroidContext(getActivity());
         AccountFragment accountFragment = (AccountFragment) getChildFragmentManager().findFragmentById(R.id.account);
         loadEntries();
 
@@ -91,9 +89,10 @@ public class AccountFragment extends Fragment {
         profilenumber = (TextView)getView().findViewById(R.id.tvcontactnumber);
         profileemail = (TextView)getView().findViewById(R.id.tvemail);
 
+        String path = "/Users";
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReferenceFromUrl("https://bantay-f81c2.firebaseio.com/Users");
+        DatabaseReference databaseReference = firebaseDatabase.getReference(path);
 
         databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override

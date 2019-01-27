@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
-   // private Firebase UserRootRef;
+
 
     public String fname, lname, addressb, cnumber, ubarangay, email, pword, cpword;
 
@@ -43,12 +43,12 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         setRegister();
-       // Firebase.setAndroidContext(this); //Needed for Firebase.client
+
 
 
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
-       // UserRootRef = new Firebase("https://bantay-f81c2.firebaseio.com/Users"); //Child in database
+
 
         //Register
         create.setOnClickListener(new View.OnClickListener() {
@@ -167,9 +167,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     //Account details to database
     private void sendUserData(){
-
+        String path = "/Users";
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReferenceFromUrl("https://bantay-f81c2.firebaseio.com/Users");
+        DatabaseReference databaseReference = firebaseDatabase.getReference(path);
         AccountDetails accountDetails = new AccountDetails(fname, lname, addressb, cnumber, ubarangay, email);
         databaseReference.child(firebaseAuth.getUid()).setValue(accountDetails);
     }

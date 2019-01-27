@@ -37,7 +37,7 @@ public class EditAccountFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
   //  private String emailVar;
-
+    String path = "/Users";
 
 
 
@@ -106,7 +106,7 @@ public class EditAccountFragment extends Fragment {
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReferenceFromUrl("https://bantay-f81c2.firebaseio.com/Users");
+        DatabaseReference databaseReference = firebaseDatabase.getReference(path);
 
         databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -152,7 +152,7 @@ public class EditAccountFragment extends Fragment {
 
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReferenceFromUrl("https://bantay-f81c2.firebaseio.com/Users");
+        DatabaseReference databaseReference = firebaseDatabase.getReference(path);
         AccountDetails accountDetails;
         accountDetails = new AccountDetails(fname, lname, addressb, cnumber, ubarangay, uemail);
         databaseReference.child(firebaseAuth.getUid()).setValue(accountDetails);
