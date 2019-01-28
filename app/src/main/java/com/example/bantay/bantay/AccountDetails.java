@@ -1,7 +1,7 @@
 package com.example.bantay.bantay;
 
 /*
-* THIS IS TO GET THE DETAILS OF THE ACCOUNT IN REGISTRATION
+* THIS IS TO SET AND GET THE DETAILS OF THE ACCOUNT IN REGISTRATION (RegisterActivity)
 *
 * */
 public class AccountDetails {

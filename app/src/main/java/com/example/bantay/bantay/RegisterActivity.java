@@ -89,6 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    //Get register entries
     private void setRegister(){
 
         firstname = (EditText)findViewById(R.id.createfirstname);

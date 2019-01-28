@@ -165,6 +165,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful() && task.getResult() != null){
                             Location currentLocation = (Location) task.getResult();
+
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                         }
                         else{
@@ -179,5 +180,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.d("getDeviceLocation", "Device location not working!");
         }
     }
+
+
 }
 

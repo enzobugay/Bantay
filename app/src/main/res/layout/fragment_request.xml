@@ -2,14 +2,14 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout4"
+    android:id="@+id/request"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RequestFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <CheckBox
-        android:id="@+id/checkBox5"
+        android:id="@+id/requestmedical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -26,7 +26,7 @@
         app:layout_constraintVertical_bias="0.749" />
 
     <Button
-        android:id="@+id/createcreate2"
+        android:id="@+id/requestbutton"
         android:layout_width="215dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -45,7 +45,7 @@
         app:layout_constraintVertical_bias="0.993" />
 
     <CheckBox
-        android:id="@+id/checkBox4"
+        android:id="@+id/requestinfant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -98,17 +98,33 @@
         app:layout_constraintVertical_bias="0.077" />
 
     <TextView
-        android:id="@+id/requestname"
+        android:id="@+id/requestfirstname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Name: "
+        android:text="First name:"
         android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.108"
+        app:layout_constraintHorizontal_bias="0.117"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.168" />
+
+    <TextView
+        android:id="@+id/requestlastname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Last name:"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.695"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.168" />
@@ -185,7 +201,7 @@
         app:layout_constraintVertical_bias="0.53" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/requestpwd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -202,7 +218,7 @@
         app:layout_constraintVertical_bias="0.68" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/requestsenior"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -219,7 +235,7 @@
         app:layout_constraintVertical_bias="0.749" />
 
     <CheckBox
-        android:id="@+id/checkBox3"
+        android:id="@+id/requestother"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
