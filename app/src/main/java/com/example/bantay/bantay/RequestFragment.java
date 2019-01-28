@@ -1,10 +1,13 @@
 package com.example.bantay.bantay;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,10 +63,25 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(validate()){
-                    sendRescueRequest();
-                    Toast.makeText(getActivity(), "You sent a rescue request", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getActivity(), "Rescue request send failed", Toast.LENGTH_SHORT).show();
+                    //Alert dialog
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                    alertDialog.setCancelable(false);
+                    alertDialog.setTitle("Send Rescue Request?");
+                    alertDialog.setMessage("Your rescue request will be sent to Marikina City Rescue 161. Send?");
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Do nothing
+                        }
+                    });
+                    alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendRescueRequest();
+                            Toast.makeText(getActivity(), "You sent a rescue request", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alertDialog.show();
                 }
 
             }
@@ -207,7 +225,18 @@ public class RequestFragment extends Fragment {
 
 
         if (rlandmarks.isEmpty() || rpax.isEmpty()) {
+            Log.d("BOOLEAN VALIDATE", "IF WORKING");
             Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
+            Log.d("BOOLEAN VALIDATE", "PASSED THROUGH TOAST");
+        }
+        else if (requestmedical.isChecked() && rspecific.isEmpty()){
+            Toast.makeText(getActivity(), "Please specify medical conditions", Toast.LENGTH_SHORT).show();
+        }
+        else if (requestother.isChecked() && rspecific.isEmpty()){
+            Toast.makeText(getActivity(), "Please specify your other vulnerability", Toast.LENGTH_SHORT).show();
+        }
+        else if (requestother.isChecked() && requestmedical.isChecked() && rspecific.isEmpty()){
+            Toast.makeText(getActivity(), "Please specify medical conditions & other vulnerability", Toast.LENGTH_SHORT).show();
         }
         else{
             result = true;
