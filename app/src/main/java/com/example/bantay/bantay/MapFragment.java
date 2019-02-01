@@ -40,7 +40,7 @@ import com.google.android.gms.tasks.Task;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-
+    //vars
     GoogleMap map;
     FusedLocationProviderClient fusedLocationProviderClient;
     float DEFAULT_ZOOM = 17f;
@@ -114,16 +114,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-    //Show map in fragment
-   /* @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-    }*/
 
     //Actual map
     @Override
@@ -134,10 +124,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //Current location of user
         if (mLocationPermissionsGranted) {
             getDeviceLocation();
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 getLocationPermission();
             }
             map.setMyLocationEnabled(true);
+            map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                @Override
+                public boolean onMyLocationButtonClick() {
+                    if (true){
+                        getDeviceLocation();
+                    }
+                    return false;
+                }
+            });
         }
 
         //Evacuation center markers
@@ -167,7 +166,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful() && task.getResult() != null){
                             Location currentLocation = (Location) task.getResult();
-
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                         }
                         else{
