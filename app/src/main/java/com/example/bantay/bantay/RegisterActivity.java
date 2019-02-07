@@ -92,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    //Get register entries
+    //Set register entries
     private void setRegister(){
 
         firstname = (EditText)findViewById(R.id.createfirstname);
@@ -109,10 +109,10 @@ public class RegisterActivity extends AppCompatActivity {
         barangay = (Spinner)findViewById(R.id.createbarangay);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
                 (RegisterActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.barangay));
+
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         barangay.setAdapter(arrayAdapter);
 
-        //String Text = barangay.getSelectedItem().toString();
 
 
     }

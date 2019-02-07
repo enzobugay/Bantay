@@ -137,8 +137,8 @@ public class EditAccountFragment extends Fragment {
                 contactnumber.setText(accountDetails.getUserContactNumber());
                 email = dataSnapshot.child("userEmail").getValue(String.class);
 
-                /* GET SELECTED BARANGAY (NOT YET DONE!!!)
-                String compareValue = accountDetails.getUserBarangay();
+                //Set the dropdown value to user's barangay
+                String compareValue = accountDetails.userBarangay;
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
                         (getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.barangay));
                 arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -146,7 +146,7 @@ public class EditAccountFragment extends Fragment {
                 if (compareValue != null) {
                     int spinnerPosition = arrayAdapter.getPosition(compareValue);
                     barangay.setSelection(spinnerPosition);
-                }*/
+                }
             }
 
             @Override

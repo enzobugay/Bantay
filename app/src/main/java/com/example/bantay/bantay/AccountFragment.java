@@ -82,7 +82,6 @@ public class AccountFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         firebaseAuth.signOut();
-                        getActivity().onBackPressed();
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
                     }
