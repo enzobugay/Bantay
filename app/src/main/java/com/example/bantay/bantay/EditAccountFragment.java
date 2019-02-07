@@ -1,6 +1,8 @@
 package com.example.bantay.bantay;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,13 +34,12 @@ import org.w3c.dom.Text;
 public class EditAccountFragment extends Fragment {
 
     private EditText firstname, lastname, address, contactnumber;
-    private TextView email;
+    private String email, fname, lname, addressb, cnumber;
     private Spinner barangay;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-  //  private String emailVar;
-    String path = "/Users/Residents";
 
+    String path = "/Users/Residents";
 
 
     public EditAccountFragment() {
@@ -57,9 +58,26 @@ public class EditAccountFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateEntries();
-                Toast.makeText(getActivity(), "Account details saved!", Toast.LENGTH_SHORT).show();
-                setFragment();
+                if(validate()){
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                    alertDialog.setCancelable(false);
+                    alertDialog.setMessage("Save account details?");
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Do nothing
+                        }
+                    });
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            updateEntries();
+                            Toast.makeText(getActivity(), "Account details saved!", Toast.LENGTH_SHORT).show();
+                            setFragment();
+                        }
+                    });
+                    alertDialog.show();
+                }
             }
         });
         //Cancel button
@@ -88,6 +106,8 @@ public class EditAccountFragment extends Fragment {
         loadEntries();
     }
 
+
+
     //Load Account Details Method
     private void loadEntries() {
 
@@ -100,8 +120,6 @@ public class EditAccountFragment extends Fragment {
                 (getActivity(), android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.barangay));
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         barangay.setAdapter(arrayAdapter);
-        email = (TextView) getView().findViewById(R.id.editemail);
-
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -117,7 +135,7 @@ public class EditAccountFragment extends Fragment {
                 address.setText(accountDetails.getUserAddress());
                 barangay.setSelected(Boolean.parseBoolean(accountDetails.getUserBarangay()));
                 contactnumber.setText(accountDetails.getUserContactNumber());
-                email.setText(accountDetails.getUserEmail());
+                email = dataSnapshot.child("userEmail").getValue(String.class);
 
                 /* GET SELECTED BARANGAY (NOT YET DONE!!!)
                 String compareValue = accountDetails.getUserBarangay();
@@ -139,17 +157,13 @@ public class EditAccountFragment extends Fragment {
     }
 
 
+
+
     //Save edited account details to database
     private void updateEntries() {
 
-        String fname = firstname.getText().toString();
-        String lname = lastname.getText().toString();
-        String addressb = address.getText().toString();
-        String cnumber = contactnumber.getText().toString();
         String ubarangay = barangay.getSelectedItem().toString();
-        String uemail = email.getText().toString();
-
-
+        String uemail = email;
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
@@ -157,6 +171,29 @@ public class EditAccountFragment extends Fragment {
         accountDetails = new AccountDetails(fname, lname, addressb, cnumber, ubarangay, uemail);
         databaseReference.child(firebaseAuth.getUid()).setValue(accountDetails);
 
+    }
+
+    //Validate all fields
+    private boolean validate(){
+        Boolean result = false;
+
+        firstname = (EditText) getView().findViewById(R.id.editfirstname);
+        lastname = (EditText) getView().findViewById(R.id.editlastname);
+        address = (EditText) getView().findViewById(R.id.editaddress);
+        contactnumber = (EditText) getView().findViewById(R.id.editcontactnumber);
+
+        fname = firstname.getText().toString();
+        lname = lastname.getText().toString();
+        addressb = address.getText().toString();
+        cnumber = contactnumber.getText().toString();
+
+        if(fname.isEmpty() || lname.isEmpty() || addressb.isEmpty() || cnumber.isEmpty()){
+            Toast.makeText(getActivity(), "Please fill up all fields", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            result = true;
+        }
+        return result;
     }
 
     //Cancel method

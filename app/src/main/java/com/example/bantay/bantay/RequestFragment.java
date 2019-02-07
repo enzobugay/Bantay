@@ -2,7 +2,12 @@ package com.example.bantay.bantay;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +35,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,10 +54,13 @@ public class RequestFragment extends Fragment {
     public CheckBox requestpwd, requestsenior, requestinfant, requestmedical, requestother;
 
     public String rfirstname, rlastname, rcontactnum, rlocation, rlandmarks, rpax, rpwd, rsenior,
-            rinfant, rmedical, rother, rspecific;
+            rinfant, rmedical, rother, rspecific, rdatetime;
 
     public FirebaseAuth firebaseAuth;
     public FirebaseDatabase firebaseDatabase;
+
+    Geocoder geocoder;
+    List<Address> addressList;
 
     public RequestFragment() {
         // Required empty public constructor
@@ -96,18 +110,23 @@ public class RequestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RequestFragment requestFragment = (RequestFragment) getChildFragmentManager().findFragmentById(R.id.request);
-        loadEntries();
-        getEntries();
+
+        if(!Connection()){
+            buildDialog().show();
+        } else {
+            loadEntries();
+        }
 
     }
 
-    //Get name, contact number, and location method
+    //Get name, contact number, and location of user
     private void loadEntries(){
 
         requestfirstname = (TextView)getView().findViewById(R.id.requestfirstname);
         requestlastname = (TextView)getView().findViewById(R.id.requestlastname);
         requestcontactnumber = (TextView)getView().findViewById(R.id.requestcontactnumber);
         requestlocation = (TextView)getView().findViewById(R.id.requestlocation);
+
 
         String path = "/Users/Residents";
         firebaseAuth = FirebaseAuth.getInstance();
@@ -133,10 +152,9 @@ public class RequestFragment extends Fragment {
 
             }
         });
-    }
 
-    //Get request entries
-    private void getEntries(){
+
+    //Get request entries of user
 
         requestlandmarks = getView().findViewById(R.id.requestlandmarks);
         requestpax = getView().findViewById(R.id.requestpax);
@@ -147,7 +165,11 @@ public class RequestFragment extends Fragment {
         requestother = getView().findViewById(R.id.requestother);
         requestspecific = getView().findViewById(R.id.requestspecification);
 
-        //Initial values of checkboxes
+        //Date and time
+        SimpleDateFormat ISO_8601_FORMAT = new SimpleDateFormat("MM-dd-yyyy' 'hh:mm:ss a"); //format (https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
+        rdatetime = ISO_8601_FORMAT.format(new Date());
+
+        //Set initial values of checkboxes
         rpwd = "false";
         rsenior = "false";
         rinfant = "false";
@@ -213,7 +235,7 @@ public class RequestFragment extends Fragment {
     }
 
 
-    //Validate fields
+    //Validate entry fields
     private Boolean validate(){
         Boolean result = false;
 
@@ -254,6 +276,98 @@ public class RequestFragment extends Fragment {
         RequestEntries requestEntries = new RequestEntries(rfirstname, rlastname, rcontactnum, rlocation,
                 rlandmarks, rpax, rpwd, rsenior, rinfant, rmedical, rother, rspecific);
         databaseReference.child(firebaseAuth.getUid()).setValue(requestEntries);
+        databaseReference.child(firebaseAuth.getUid()).child("requestDateTime").setValue(rdatetime);
+        databaseReference.child(firebaseAuth.getUid()).child("UrgentFlag").setValue("0");
 
+    }
+
+    //Check internet connection of device
+    public boolean Connection(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            android.net.NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if ((mobile != null && mobile.isConnected()) || (wifi != null && wifi.isConnected()))
+                return true;
+            else return false;
+        } else
+            return false;
+
+    }
+    //Alert dialog if no internet connection
+    public AlertDialog.Builder buildDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("This feature requires internet connection. Please turn on your internet connection.");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!Connection()){
+                    buildDialog().show();
+                }
+                else{
+                    setFragment();
+                }
+            }
+        });
+        return builder;
+    }
+
+    //Fragment setters
+    public void setFragment(){
+
+        String newrescuerequest = "/Rescue Requests/New Rescue Requests"; //Database path
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference(newrescuerequest);
+
+        databaseReference.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()){
+
+                }
+                else{
+                    setFragmentB();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setFragmentB(){
+
+        String deployedrescuerequest = "/Rescue Requests/Deployed Rescue Requests"; //Database path
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference(deployedrescuerequest);
+
+        databaseReference.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()){
+
+                }
+                else{
+                    loadEntries();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

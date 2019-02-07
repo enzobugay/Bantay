@@ -23,6 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText firstname, lastname, address, contactnumber, password, confirmpassword;
@@ -113,6 +116,18 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
+    //Validate password
+    public static boolean isValidPassword(final String password) {
+
+        Pattern pattern;
+        Matcher matcher;
+        final String PASSWORD_PATTERN = "^.*(?=.*[0-9])(?=.*[A-Z]).*$"; //must have a capital letter and number
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(password);
+
+        return matcher.matches();
+
+    }
 
     //Validate if required fields are filled
     private Boolean validate(){
@@ -134,9 +149,18 @@ public class RegisterActivity extends AppCompatActivity {
         else if (!pword.equals(cpword)){
             Toast.makeText(this, "Password does NOT match!", Toast.LENGTH_SHORT).show();
         }
-        else {
-            result = true;
+        else if(pword.equals(cpword)){
+            if (pword.length()<8){
+                Toast.makeText(this, "Password must be atleast 8 characters!", Toast.LENGTH_SHORT).show();
+            }
+            else if(!isValidPassword(pword)){
+                Toast.makeText(this, "Password must contain a capital letter and a number!", Toast.LENGTH_LONG).show();
+            }
+            else {
+                result = true;
+            }
         }
+
         return result;
 
     }
