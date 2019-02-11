@@ -24,8 +24,8 @@ public class HomeActivity extends AppCompatActivity {
     private FrameLayout frameLayout;
     private MapFragment mapFragment;
     private CctvFragment cctvFragment;
-    private RequestFragment requestFragment;
-    private ReportFragment reportFragment;
+    private SetRequestFragment setRequestFragment;
+    //private ReportFragment reportFragment;
     private AccountFragment accountFragment;
 
     //google play servies check
@@ -44,8 +44,8 @@ public class HomeActivity extends AppCompatActivity {
 
         mapFragment = new MapFragment();
         cctvFragment = new CctvFragment();
-        requestFragment = new RequestFragment();
-        reportFragment = new ReportFragment();
+        setRequestFragment = new SetRequestFragment();
+       // reportFragment = new ReportFragment();
         accountFragment = new AccountFragment();
 
         //default fragment
@@ -70,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
                         setFragment(cctvFragment);
                         return true;
                     case R.id.nav_request:
-                        setFragment(requestFragment);
+                        setFragment(setRequestFragment);
                         return true;
                    /* case R.id.nav_report:
                         setFragment(reportFragment);

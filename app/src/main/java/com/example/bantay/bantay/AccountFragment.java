@@ -37,10 +37,9 @@ import org.w3c.dom.Text;
  */
 public class AccountFragment extends Fragment {
 
-    private TextView profilefirstname, profilelastname, profileaddress, profilebarangay, profilenumber, profileemail;
+    private TextView profilefirstname, profileaddress, profilebarangay, profilenumber, profileemail;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-
 
     public AccountFragment() {
         // Required empty public constructor
@@ -105,7 +104,6 @@ public class AccountFragment extends Fragment {
     private void loadEntries(){
 
         profilefirstname = (TextView)getView().findViewById(R.id.tvfirstname);
-        profilelastname = (TextView)getView().findViewById(R.id.tvlastname);
         profileaddress = (TextView)getView().findViewById(R.id.tvaddress);
         profilebarangay = (TextView)getView().findViewById(R.id.tvbarangay);
         profilenumber = (TextView)getView().findViewById(R.id.tvcontactnumber);
@@ -120,8 +118,7 @@ public class AccountFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 AccountDetails accountDetails = dataSnapshot.getValue(AccountDetails.class);
-                profilefirstname.setText(accountDetails.getUserFirstName());
-                profilelastname.setText(accountDetails.getUserLastName());
+                profilefirstname.setText(accountDetails.getUserFirstName() + " " + accountDetails.getUserLastName());
                 profileaddress.setText(accountDetails.getUserAddress());
                 profilebarangay.setText(accountDetails.getUserBarangay());
                 profilenumber.setText(accountDetails.getUserContactNumber());

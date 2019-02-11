@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String uemail = email.getText().toString().trim();
                 String epassword = password.getText().toString().trim();
-                if(uemail.equals("")||(epassword.equals(""))){
+                if(uemail.isEmpty() ||(epassword.isEmpty())){
                     Toast.makeText(MainActivity.this, "Enter your email address and password", Toast.LENGTH_LONG).show();
                 }
                 else{
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else{
                         progressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, HomeActivity.class));
         }
         else{
-            Toast.makeText(this, "Verify your email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Verify your email address to login", Toast.LENGTH_SHORT).show();
             firebaseAuth.signOut();
         }
 

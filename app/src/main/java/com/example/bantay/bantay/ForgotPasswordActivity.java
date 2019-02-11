@@ -40,7 +40,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String useremail = emailforgot.getText().toString().trim();
 
-                if(useremail.equals("")){
+                if(useremail.isEmpty()){
                     Toast.makeText(ForgotPasswordActivity.this, "Enter your email address", Toast.LENGTH_LONG).show();
                 }
                 else{
@@ -60,7 +60,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             }
                             else{
                                 progressDialog.dismiss();
-                                Toast.makeText(ForgotPasswordActivity.this, "Password reset error!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(ForgotPasswordActivity.this, "User does not exist!", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
