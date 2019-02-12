@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 /**
@@ -48,13 +49,13 @@ import java.util.Locale;
  */
 public class RequestFragment extends Fragment {
 
-    public TextView requestfirstname, requestlastname, requestcontactnumber, requestlocation;
+    public TextView requestfirstname, requestcontactnumber, requestlocation;
 
     public EditText requestlandmarks,requestspecific, requestpax;
 
     public CheckBox requestpwd, requestsenior, requestinfant, requestmedical, requestother;
 
-    public String rfirstname, rlastname, rcontactnum, rlocation, rlandmarks, rpax, rpwd, rsenior,
+    public String rfirstname, rfirstnameb, rlastname, requestlastname, rcontactnum, rlocation, rlandmarks, rpax, rpwd, rsenior,
             rinfant, rmedical, rother, rspecific, rdatetime;
 
     public FirebaseAuth firebaseAuth;
@@ -95,6 +96,7 @@ public class RequestFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             sendRescueRequest();
+                            setRequestFragment();
                             Toast.makeText(getActivity(), "You sent a rescue request", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -118,7 +120,6 @@ public class RequestFragment extends Fragment {
     private void loadEntries(){
 
         requestfirstname = (TextView)getView().findViewById(R.id.requestfirstname);
-        requestlastname = (TextView)getView().findViewById(R.id.requestlastname);
         requestcontactnumber = (TextView)getView().findViewById(R.id.requestcontactnumber);
         requestlocation = (TextView)getView().findViewById(R.id.requestlocation);
 
@@ -132,12 +133,11 @@ public class RequestFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                String rfirstname = dataSnapshot.child("userFirstName").getValue(String.class);
-                String rlastname = dataSnapshot.child("userLastName").getValue(String.class);
+                rfirstnameb = dataSnapshot.child("userFirstName").getValue(String.class);
+                requestlastname = dataSnapshot.child("userLastName").getValue(String.class);
                 String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
 
-                requestfirstname.setText(rfirstname);
-                requestlastname.setText(rlastname);
+                requestfirstname.setText(rfirstnameb + " " + requestlastname);
                 requestcontactnumber.setText(rcontactnumber);
                 requestlocation.setText("TEST");
             }
@@ -237,8 +237,8 @@ public class RequestFragment extends Fragment {
         rlandmarks = requestlandmarks.getText().toString();
         rpax = requestpax.getText().toString();
         rspecific = requestspecific.getText().toString();
-        rfirstname = requestfirstname.getText().toString();
-        rlastname = requestlastname.getText().toString();
+        rfirstname = rfirstnameb;
+        rlastname = requestlastname;
         rcontactnum = requestcontactnumber.getText().toString();
         rlocation = requestlocation.getText().toString();
 
@@ -271,8 +271,19 @@ public class RequestFragment extends Fragment {
         RequestEntries requestEntries = new RequestEntries(rfirstname, rlastname, rcontactnum, rlocation,
                 rlandmarks, rpax, rpwd, rsenior, rinfant, rmedical, rother, rspecific);
         databaseReference.child(firebaseAuth.getUid()).setValue(requestEntries);
+        //Values not included in RequestEntries.class
         databaseReference.child(firebaseAuth.getUid()).child("requestDateTime").setValue(rdatetime);
         databaseReference.child(firebaseAuth.getUid()).child("UrgentFlag").setValue("0");
+        databaseReference.child(firebaseAuth.getUid()).child("rescueTeam").setValue("");
 
+    }
+
+    //Go to NewRescueRequest fragment
+    public void setRequestFragment(){
+        SetRequestFragment setRequestFragment = new SetRequestFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_nav, setRequestFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

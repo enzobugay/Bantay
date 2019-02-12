@@ -117,7 +117,8 @@ public class SetRequestFragment extends Fragment {
                     progressDialog.dismiss();
                 }
                 else{
-                    setFragmentB();
+                    requestFragment();
+                    progressDialog.dismiss();
                 }
             }
 

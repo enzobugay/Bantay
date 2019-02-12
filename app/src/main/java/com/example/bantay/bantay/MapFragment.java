@@ -83,15 +83,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onResume(){
         super.onResume();
-        getLocationPermission();
+        initMap();
     }
 
-    public boolean checkMapServices(){
+    /*public boolean checkMapServices(){
         if(isMapsEnabled()){
             return true;
         }
         return false;
-    }
+    }*/
 
     public void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -112,6 +112,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         final LocationManager manager = (LocationManager)getActivity().getSystemService(getActivity().LOCATION_SERVICE);
 
         if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d("isMapsEnabled", "GPS VALIDATION IS WORKING!");
             buildAlertMessageNoGps();
             return false;
         }
@@ -124,7 +125,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d("getLocationPermission", "FINE_LOCATION IF IS WORKING!");
                 mLocationPermissionsGranted = true;
-                initMap();
+                //initMap();
         } else {
             Log.d("getLocationPermission", "FINE_LOCATION WORKING!");
             requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
@@ -162,7 +163,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style_json)); //JSON map style in /res/raw
         map = googleMap;
         //Current location of user
-        if(checkMapServices()) {
+        map.setLatLngBoundsForCameraTarget(MARIKINA);
+        moveCamera(new LatLng(14.647329, 121.104834), 10f);
+
+        if(isMapsEnabled()) {
             if (mLocationPermissionsGranted) {
                 getDeviceLocation();
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -207,7 +211,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         try{
-            if(checkMapServices()) {
+            if(isMapsEnabled()) {
                 if (mLocationPermissionsGranted) {
                     final Task location = fusedLocationProviderClient.getLastLocation();
                     location.addOnCompleteListener(new OnCompleteListener() {
@@ -233,9 +237,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            } else {
-                                moveCamera(new LatLng(14.647329, 121.104834), 10f);
-                                Toast.makeText(getActivity(), "Can't get current location", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
