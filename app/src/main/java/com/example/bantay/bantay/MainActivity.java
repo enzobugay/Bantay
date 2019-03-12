@@ -2,9 +2,11 @@ package com.example.bantay.bantay;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-
+    int attemptCounter = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +108,20 @@ public class MainActivity extends AppCompatActivity {
                         checkEmailVerification();
                     }
                     else{
+                        attemptCounter--;
                         progressDialog.dismiss();
                         Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
+                        if(attemptCounter == 0){
+                            Log.d("LOGIN COUNTER", "PASSED");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d("LOGIN DISABLER", "PASSED");
+                                    login.setEnabled(false);
+                                    Toast.makeText(MainActivity.this, "You reached 5 attempts, please wait 30 secs to re-login", Toast.LENGTH_LONG).show();
+                                }
+                            }, 30000);
+                        }
                     }
                 }
             });

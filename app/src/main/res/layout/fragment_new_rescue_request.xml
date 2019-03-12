@@ -263,7 +263,7 @@
         app:layout_constraintVertical_bias="0.122" />
 
     <TextView
-        android:id="@+id/textView40"
+        android:id="@+id/newrequesttv"
         android:layout_width="252dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -281,13 +281,14 @@
         app:layout_constraintVertical_bias="0.798" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/urgentbtn"
         android:layout_width="186dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:clickable="false"
         android:text="URGENT"
         android:textColor="@android:color/holo_red_light"
         app:layout_constraintBottom_toBottomOf="parent"

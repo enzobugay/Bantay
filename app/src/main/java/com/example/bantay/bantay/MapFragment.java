@@ -1,28 +1,26 @@
 package com.example.bantay.bantay;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,21 +37,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
+
+//da
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import static android.support.v4.content.ContextCompat.*;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback{
 
     //vars
 
 
     GoogleMap map;
     FusedLocationProviderClient fusedLocationProviderClient;
+
     float DEFAULT_ZOOM = 17f;
     public Boolean mLocationPermissionsGranted = false;
     public final static int LOCATION_PERMISSION_REQUEST_CODE = 1234;
@@ -62,6 +67,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public LatLngBounds MARIKINA = new LatLngBounds(new LatLng(14.618055, 121.079299), new LatLng(14.673361, 121.131398));
     public TextView mapAddress;
     Geocoder geocoder;
+// DA
+    LocationManager locationManager;
+    String provider;
+    double dalat,dalng;
     List<Address> addressList;
     //Evacuation center markers
     public Marker SampaguitaGym, BarangkaES, IVCES, KalumpangES, LVictorinoES, MalandayES, MarikinaES, SanRoqueES,
@@ -70,6 +79,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public MapFragment() {
         // Required empty public constructor
     }
+
+//    DA
+//    private void getLocation()
+//    {
+//        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE)
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,13 +100,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onResume();
         initMap();
     }
-
-    /*public boolean checkMapServices(){
-        if(isMapsEnabled()){
-            return true;
-        }
-        return false;
-    }*/
 
     public void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -122,7 +130,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d("getLocationPermission", "FINE_LOCATION IF IS WORKING!");
                 mLocationPermissionsGranted = true;
                 //initMap();
@@ -219,24 +227,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         public void onComplete(@NonNull Task task) {
                             if (task.isSuccessful() && task.getResult() != null) {
                                 Location currentLocation = (Location) task.getResult();
+                                LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
+                                map.animateCamera(cameraUpdate);
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
 
-                                geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                                try {
-                                    addressList = geocoder.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
-                                    //  String address = addressList.get(0).getAddressLine(0);
+                                //Get location address
+                                locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                                provider = locationManager.getBestProvider(new Criteria(), false);
 
-                                    String addressline = addressList.get(0).getAddressLine(0);
-                                    String thoroughfare = addressList.get(0).getThoroughfare(); //Street
-                                    String locality = addressList.get(0).getLocality(); //City or Marikina
-                                    String adminarea = addressList.get(0).getAdminArea(); //Capital or Metro Manila
-                                    // String fulladdress = thoroughfare+", "+locality+", "+adminarea;
-                                    String fulladdress = addressline;
-                                    mapAddress = getView().findViewById(R.id.mapAddress);
-                                    mapAddress.setText(fulladdress);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                final Location location = locationManager.getLastKnownLocation(provider);
+                                if(location == null) {
+                                    Log.e("ERROR", "Location is null");
                                 }
+                                dalat = currentLocation.getLatitude();
+                                dalng = currentLocation.getLongitude();
+                                new GetAddress().execute(String.format("%.4f,%.4f",dalat,dalng));
+
                             }
                         }
                     });
@@ -248,5 +255,50 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //Get location address
+    private class GetAddress extends AsyncTask<String,Void,String> {
 
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try{
+                double lat = Double.parseDouble(strings[0].split(",")[0]);
+                double lng = Double.parseDouble(strings[0].split(",")[1]);
+                String response;
+                HttpDataHandler http = new HttpDataHandler();
+
+                /* Other geocoder urls (optional)
+                String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%.4f,%.4f&sensor=false&key=AIzaSyDvTpjZhv9Qf7Z7xMe1Vb5w08ZOIqtNV7c",lat,lng);
+                String url = String.format("http://open.mapquestapi.com/geocoding/v1/reverse?key=2KtQuwfGGdfHxj6ybdgqcC7uFHrgVoJy&location=%.4f,%.4f",lat,lng);
+                String url = String.format("https://nominatim.openstreetmap.org/reverse?format=json&lat=%.4f&lon=%.4f",lat,lng);*/
+
+                String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=%.4f&lon=%.4f&format=json",lat,lng);
+                response = http.GetHTTPData(url);
+                Log.d("testpandebug,doinbg", response);
+                Log.d("testpandebug,doinbg", url);
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            try{
+
+                JSONObject jsonObject = new JSONObject(s);
+                String address = jsonObject.get("display_name").toString();
+                Log.d("testpandebug,onpex", address);
+                //String address = ((JSONArray)jsonObject.get("results")).getJSONObject(1).get("formatted_address").toString();
+                mapAddress = getView().findViewById(R.id.mapAddress);
+                mapAddress.setText(address);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
