@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SearchEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -473,6 +474,7 @@ public class RequestFragment extends Fragment {
         databaseReference.child(firebaseAuth.getUid()).child("urgentFlag").setValue("0");
         databaseReference.child(firebaseAuth.getUid()).child("rescueTeam").setValue("");
         databaseReference.child(firebaseAuth.getUid()).child("notVulnerable").setValue(notvulnerable);
+        databaseReference.child(firebaseAuth.getUid()).child("receivedTimestamp").setValue("");
 
     }
 

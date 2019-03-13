@@ -37,6 +37,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-places:16.0.0'
+    //Vitamio
+    implementation 'me.neavo:vitamio:4.2.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
