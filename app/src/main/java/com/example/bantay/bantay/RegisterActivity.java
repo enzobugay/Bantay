@@ -133,13 +133,13 @@ public class RegisterActivity extends AppCompatActivity {
     private Boolean validate(){
         Boolean result = false;
 
-        fname = firstname.getText().toString();
-        lname = lastname.getText().toString();
-        addressb = address.getText().toString();
-        cnumber = contactnumber.getText().toString();
-        email = emailadd.getText().toString();
-        pword = password.getText().toString();
-        cpword = confirmpassword.getText().toString();
+        fname = firstname.getText().toString().trim();
+        lname = lastname.getText().toString().trim();
+        addressb = address.getText().toString().trim();
+        cnumber = contactnumber.getText().toString().trim();
+        email = emailadd.getText().toString().trim();
+        pword = password.getText().toString().trim();
+        cpword = confirmpassword.getText().toString().trim();
         ubarangay = barangay.getSelectedItem().toString();
 
 

@@ -166,7 +166,7 @@ public class RequestFragment extends Fragment {
 
 
     /*
-    --------------------------GPS LOCATION AND VALIDATION METHODS------------------------------------
+    ------------------------------GPS LOCATION AND VALIDATION METHODS-------------------------------
     */
 
     public void buildAlertMessageNoGps() {
@@ -424,9 +424,9 @@ public class RequestFragment extends Fragment {
     private Boolean validate(){
         Boolean result = false;
 
-        rlandmarks = requestlandmarks.getText().toString();
-        rpax = requestpax.getText().toString();
-        rspecific = requestspecific.getText().toString();
+        rlandmarks = requestlandmarks.getText().toString().trim();
+        rpax = requestpax.getText().toString().trim();
+        rspecific = requestspecific.getText().toString().trim();
         rfirstname = rfirstnameb;
         rlastname = requestlastname;
         rcontactnum = requestcontactnumber.getText().toString();
@@ -438,13 +438,13 @@ public class RequestFragment extends Fragment {
             Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
             Log.d("BOOLEAN VALIDATE", "PASSED THROUGH TOAST");
         }
-        else if (requestmedical.isChecked() && rspecific.isEmpty()){
+        else if (rmedical.equals("true") && rother.equals("false") && rspecific.isEmpty()){
             Toast.makeText(getActivity(), "Please specify medical conditions", Toast.LENGTH_SHORT).show();
         }
-        else if (requestother.isChecked() && rspecific.isEmpty()){
+        else if (rother.equals("true") && rmedical.equals("false") && rspecific.isEmpty()){
             Toast.makeText(getActivity(), "Please specify your other vulnerability", Toast.LENGTH_SHORT).show();
         }
-        else if (requestother.isChecked() && requestmedical.isChecked() && rspecific.isEmpty()){
+        else if (rmedical.equals("true") && rother.equals("true") && rspecific.isEmpty()){
             Toast.makeText(getActivity(), "Please specify medical conditions & other vulnerability", Toast.LENGTH_SHORT).show();
         }
         else if(rlocation.isEmpty()){

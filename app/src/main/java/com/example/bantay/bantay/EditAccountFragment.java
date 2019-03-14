@@ -182,10 +182,10 @@ public class EditAccountFragment extends Fragment {
         address = (EditText) getView().findViewById(R.id.editaddress);
         contactnumber = (EditText) getView().findViewById(R.id.editcontactnumber);
 
-        fname = firstname.getText().toString();
-        lname = lastname.getText().toString();
-        addressb = address.getText().toString();
-        cnumber = contactnumber.getText().toString();
+        fname = firstname.getText().toString().trim();
+        lname = lastname.getText().toString().trim();
+        addressb = address.getText().toString().trim();
+        cnumber = contactnumber.getText().toString().trim();
 
         if(fname.isEmpty() || lname.isEmpty() || addressb.isEmpty() || cnumber.isEmpty()){
             Toast.makeText(getActivity(), "Please fill up all fields", Toast.LENGTH_SHORT).show();

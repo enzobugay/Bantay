@@ -10,6 +10,8 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -55,6 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
 
     //vars
 
+    View mapView;
 
     GoogleMap map;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -67,24 +71,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     public LatLngBounds MARIKINA = new LatLngBounds(new LatLng(14.618055, 121.079299), new LatLng(14.673361, 121.131398));
     public TextView mapAddress;
     Geocoder geocoder;
-// DA
+    //Location
     LocationManager locationManager;
     String provider;
     double dalat,dalng;
     List<Address> addressList;
     //Evacuation center markers
     public Marker SampaguitaGym, BarangkaES, IVCES, KalumpangES, LVictorinoES, MalandayES, MarikinaES, SanRoqueES,
-            StoNinoES;
+            StoNinoES, ConcepcionES, ConcepcionIntegES, FortuneES, HBautistaES, KapitanMoyES, NangkaES, ParangES,
+            SSSVillageES, StMaryES, BarangkaHS, KalumpangHS, JDelaPenaHS, MalandayHS, MarikinaSciHS, SanRoqueHS,
+            StaElenaHS, StoNinoHS, TanongHS, ConcepcionIntegHS, FortuneHS, MarikinaHeightsHS, MarikinaHS, NangkaHS, ParangHS;
 
     public MapFragment() {
         // Required empty public constructor
     }
 
-//    DA
-//    private void getLocation()
-//    {
-//        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE)
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,6 +101,51 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         super.onResume();
         initMap();
     }
+
+    /*
+    ---------------------------------INTERNET VALIDATION METHODS------------------------------------
+     */
+
+    //Check internet connection of device
+    public boolean Connection(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            android.net.NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if ((mobile != null && mobile.isConnected()) || (wifi != null && wifi.isConnected()))
+                return true;
+            else return false;
+        } else
+            return false;
+
+    }
+    //Alert dialog if no internet connection
+    public android.app.AlertDialog.Builder buildDialog(){
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("This feature requires internet connection. Please turn on your internet connection.");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!Connection()){
+                    buildDialog().show();
+                }
+                else{
+                    initMap();
+                }
+            }
+        });
+        return builder;
+    }
+
+    /*
+    ------------------------------GPS AND LOCATION VALIDATION METHODS-------------------------------
+     */
 
     public void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -157,6 +203,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         }
     }
 
+    /*
+    ----------------------------------------MAP METHODS---------------------------------------------
+     */
+
     //Initiate map
     public void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -174,39 +224,77 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         map.setLatLngBoundsForCameraTarget(MARIKINA);
         moveCamera(new LatLng(14.647329, 121.104834), 10f);
 
-        if(isMapsEnabled()) {
-            if (mLocationPermissionsGranted) {
-                getDeviceLocation();
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    getLocationPermission();
-                }
-                map.setMyLocationEnabled(true);
-                map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
-                    @Override
-                    public boolean onMyLocationButtonClick() {
-                        getDeviceLocation();
-                        return false;
+        if(!Connection()){
+            buildDialog().show();
+        } else {
+            if(isMapsEnabled()) {
+                if (mLocationPermissionsGranted) {
+                    getDeviceLocation();
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        getLocationPermission();
                     }
-                });
+                    map.getUiSettings().setCompassEnabled(false); //To remove compass
+                    map.setMyLocationEnabled(true);
+                    //Get location button
+                    View locationButton = ((View) getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)locationButton.getLayoutParams();
+                    //Set position on bottom right
+                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+                    layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+                    layoutParams.setMargins(0, 0, 30, 30);
+                    //Set location button action
+                    map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                        @Override
+                        public boolean onMyLocationButtonClick() {
+                            getDeviceLocation();
+                            return false;
+                        }
+                    });
+                }
             }
         }
 
         //Evacuation center markers
         map.getUiSettings().setMapToolbarEnabled(false); //To remove "directions" button on click of marker
-        SampaguitaGym = map.addMarker(new MarkerOptions().position(new LatLng(14.648983, 121.093749)).title("Sampaguita Gym").snippet("Sampaguita St., Malanday"));
-        BarangkaES = map.addMarker(new MarkerOptions().position(new LatLng(14.633379, 121.081927)).title("Barangka Elementary School").snippet("Boni Ave., Barangka"));
-        IVCES = map.addMarker(new MarkerOptions().position(new LatLng(14.621713, 121.080356)).title("Industrial Valley Elementary School").snippet("O. De Guzman St., Sitio Olandez IVC"));
-        KalumpangES = map.addMarker(new MarkerOptions().position(new LatLng(14.622279, 121.090296)).title("Kalumpang Elementary School").snippet("Kagitingan St., Kalumpang"));
-        MalandayES = map.addMarker(new MarkerOptions().position(new LatLng(14.650276, 121.094389)).title("Malanday Elementary School").snippet("Malaya St., Malanday"));
-        LVictorinoES = map.addMarker(new MarkerOptions().position(new LatLng(14.635265, 121.090290)).title("Leodegario Victorino Elementary School").snippet("A. Bonifacio Ave., J. dela Peña"));
-        MarikinaES = map.addMarker(new MarkerOptions().position(new LatLng(14.631120, 121.097553)).title("Marikina Elementary School").snippet("Munding Ave., Sta. Elena"));
-        SanRoqueES = map.addMarker(new MarkerOptions().position(new LatLng(14.622896, 121.097122)).title("San Roque Elementary School").snippet("Abad Santos, San Roque"));
-        StoNinoES = map.addMarker(new MarkerOptions().position(new LatLng(14.637888, 121.096434)).title("Sto. Niño Elementary School").snippet("Guerilla St., Sto. Niño"));
+        SampaguitaGym = map.addMarker(new MarkerOptions().position(new LatLng(14.648983, 121.093749)).title("Sampaguita Gym").snippet("Sampaguita St., Brgy. Malanday"));
+        BarangkaES = map.addMarker(new MarkerOptions().position(new LatLng(14.633379, 121.081927)).title("Barangka Elementary School").snippet("A. Bonifacio Ave., Brgy. Barangka"));
+        IVCES = map.addMarker(new MarkerOptions().position(new LatLng(14.621713, 121.080356)).title("Industrial Valley Elementary School").snippet("O. De Guzman St., Brgy. Sitio Olandez IVC"));
+        KalumpangES = map.addMarker(new MarkerOptions().position(new LatLng(14.622279, 121.090296)).title("Kalumpang Elementary School").snippet("Kagitingan St., Brgy. Kalumpang"));
+        MalandayES = map.addMarker(new MarkerOptions().position(new LatLng(14.650276, 121.094389)).title("Malanday Elementary School").snippet("Malaya St., Brgy. Malanday"));
+        LVictorinoES = map.addMarker(new MarkerOptions().position(new LatLng(14.635265, 121.090290)).title("Leodegario Victorino Elementary School").snippet("A. Bonifacio Ave., Brgy. J. dela Peña"));
+        MarikinaES = map.addMarker(new MarkerOptions().position(new LatLng(14.631120, 121.097553)).title("Marikina Elementary School").snippet("Munding Ave., Brgy. Sta. Elena"));
+        SanRoqueES = map.addMarker(new MarkerOptions().position(new LatLng(14.622896, 121.097122)).title("San Roque Elementary School").snippet("Abad Santos, Brgy. San Roque"));
+        StoNinoES = map.addMarker(new MarkerOptions().position(new LatLng(14.637888, 121.096434)).title("Sto. Niño Elementary School").snippet("Guerilla St., Brgy. Sto. Niño"));
+        ConcepcionES = map.addMarker(new MarkerOptions().position(new LatLng(14.648190, 121.103939)).title("Concepcion Elementary School").snippet("J. Molina St., Brgy. Concepion Uno"));
+        ConcepcionIntegES = map.addMarker(new MarkerOptions().position(new LatLng(14.650226, 121.102079)).title("Concepcion Integrated Elementary School").snippet("J.P. Rizal St., Brgy. Concepion Uno"));
+        FortuneES = map.addMarker(new MarkerOptions().position(new LatLng(14.659815, 121.127064)).title("Fortune Elementary School").snippet("Champaca St., Brgy. Parang"));
+        HBautistaES = map.addMarker(new MarkerOptions().position(new LatLng(14.657542, 121.103835)).title("H. Bautista Elementary School").snippet("J.P. Rizal St., Brgy. Concepion Uno"));
+        KapitanMoyES = map.addMarker(new MarkerOptions().position(new LatLng(14.648409, 121.119018)).title("Kapitan Moy Elementary School").snippet("Champagnat Ave., Brgy. Marikina Heights"));
+        NangkaES = map.addMarker(new MarkerOptions().position(new LatLng(14.672954, 121.108390)).title("Nangka Elementary School").snippet("Balubad St., Brgy. Nangka"));
+        ParangES = map.addMarker(new MarkerOptions().position(new LatLng(14.657435, 121.111634)).title("Parang Elementary School").snippet("P. Paterno St., Brgy. Parang"));
+        SSSVillageES = map.addMarker(new MarkerOptions().position(new LatLng(14.640077, 121.121418)).title("SSS Village Elementary School").snippet("Lilac St., Brgy. Concepcion Dos"));
+        StMaryES = map.addMarker(new MarkerOptions().position(new LatLng(14.668651, 121.113670)).title("St. Mary Elementary School").snippet("St. Mary's subdv. Socorro St., Brgy. Nangka"));
+        BarangkaHS = map.addMarker(new MarkerOptions().position(new LatLng(14.633619, 121.081465)).title("Barangka High School").snippet("A. Bonifacio Ave., Brgy. Barangka"));
+        KalumpangHS = map.addMarker(new MarkerOptions().position(new LatLng(14.622361, 121.089538)).title("Kalumpang High School").snippet("Kagitingan St., Brgy. Kalumpang"));
+        JDelaPenaHS = map.addMarker(new MarkerOptions().position(new LatLng(14.635530, 121.090088)).title("Jesus Dela Peña High School").snippet("A. Bonifacio Ave., Brgy. Jesus Dela Peña"));
+        MalandayHS = map.addMarker(new MarkerOptions().position(new LatLng(14.646877, 121.090564)).title("Malanday High School").snippet("Purok V St., Brgy. Malanday"));
+        MarikinaSciHS = map.addMarker(new MarkerOptions().position(new LatLng(14.631739, 121.099410)).title("Marikina Science High School").snippet("Shoe Ave., Brgy. Sta. Elena"));
+        SanRoqueHS = map.addMarker(new MarkerOptions().position(new LatLng(14.623231, 121.096945)).title("San Roque High School").snippet("Abad Santos St., Brgy. San Roque"));
+        StaElenaHS = map.addMarker(new MarkerOptions().position(new LatLng(14.632444, 121.097417)).title("Sta. Elena High School").snippet("W. Dela Paz St., Brgy. Sta. Elena"));
+        StoNinoHS = map.addMarker(new MarkerOptions().position(new LatLng(14.639089, 121.096279)).title("Sto. Niño High School").snippet("Agricultures St., Brgy. Sto. Niño"));
+        TanongHS = map.addMarker(new MarkerOptions().position(new LatLng(14.634102, 121.085371)).title("Tañong High School").snippet("Don Gonzalo Puyat St., Brgy. Tañong"));
+        ConcepcionIntegHS = map.addMarker(new MarkerOptions().position(new LatLng(14.650000, 121.102114)).title("Concepcion Integrated High School").snippet("J.P. Rizal St., Brgy. Concepion Uno"));
+        FortuneHS = map.addMarker(new MarkerOptions().position(new LatLng(14.659547, 121.126844)).title("Fortune High School").snippet("Santan St., Brgy. Fortune"));
+        MarikinaHeightsHS = map.addMarker(new MarkerOptions().position(new LatLng(14.648161, 121.119436)).title("Marikina Heights High School").snippet("Champagnat Ave., Brgy. Marikina Heights"));
+        MarikinaHS = map.addMarker(new MarkerOptions().position(new LatLng(14.646536, 121.103067)).title("Marikina High School").snippet("Cepeda St., Brgy. Concepcion Uno"));
+        NangkaHS = map.addMarker(new MarkerOptions().position(new LatLng(14.670397, 121.101986)).title("Nangka High School").snippet("Kabayani St., Brgy. Nangka"));
+        ParangHS = map.addMarker(new MarkerOptions().position(new LatLng(14.663314, 121.112334)).title("Parang High School").snippet("Tandang Sora St., Brgy. Parang"));
     }
     //Map camera method
     public void moveCamera(LatLng latLng, float zoom){
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
         //Map boundaries
         map.setLatLngBoundsForCameraTarget(MARIKINA);
         //Camera zoom boundary
@@ -229,7 +317,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
                                 Location currentLocation = (Location) task.getResult();
                                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
-                                map.animateCamera(cameraUpdate);
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
 
                                 //Get location address

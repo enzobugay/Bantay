@@ -1,6 +1,10 @@
 package com.example.bantay.bantay;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -44,13 +48,6 @@ public class CctvFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cctv, container, false);
-
-        webView = view.findViewById(R.id.cctvfragment);
-        webView.loadUrl(httpLiveUrl);
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
-
-
         return view;
     }
 
@@ -59,6 +56,56 @@ public class CctvFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         CctvFragment cctvFragment = (CctvFragment) getChildFragmentManager().findFragmentById(R.id.cctv);
 
+        if(!Connection()){
+            buildDialog().show();
+        } else {
+            playStream();
+        }
+    }
+
+    //Check internet connection of device
+    public boolean Connection(){
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+            android.net.NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if ((mobile != null && mobile.isConnected()) || (wifi != null && wifi.isConnected()))
+                return true;
+            else return false;
+        } else
+            return false;
+
+    }
+    //Alert dialog if no internet connection
+    public AlertDialog.Builder buildDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setTitle("No Internet Connection");
+        builder.setMessage("This feature requires internet connection. Please turn on your internet connection.");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!Connection()){
+                    buildDialog().show();
+                }
+                else{
+                    playStream();
+                }
+            }
+        });
+        return builder;
+    }
+    //Play video stream
+    public void playStream(){
+
+        webView = getView().findViewById(R.id.cctvfragment);
+        webView.loadUrl(httpLiveUrl);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
     }
 }
 
