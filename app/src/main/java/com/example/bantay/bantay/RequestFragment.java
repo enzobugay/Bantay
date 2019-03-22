@@ -83,8 +83,10 @@ public class RequestFragment extends Fragment {
     public CheckBox requestpwd, requestsenior, requestinfant, requestmedical, requestother;
 
     public String rfirstname, rfirstnameb, rlastname, requestlastname, rcontactnum, rlocation, rlandmarks, rpax, rpwd, rsenior,
-            rinfant, rmedical, rother, rspecific, notvulnerable, address;
+            rinfant, rmedical, rother, rspecific, notvulnerable, address, barangayaddress;
 
+    public String notpriority = "true";
+    public String barangaypriority = "false";
 
     public FirebaseAuth firebaseAuth;
     public FirebaseDatabase firebaseDatabase;
@@ -284,10 +286,22 @@ public class RequestFragment extends Fragment {
         protected void onPostExecute(String s) {
             try{
                 JSONObject jsonObject = new JSONObject(s);
+
+                //Get full address
                 address = jsonObject.get("display_name").toString();
                 Log.d("testpandebug,requestpex", address);
                 requestlocation = getView().findViewById(R.id.requestlocation);
                 requestlocation.setText(address);
+
+                //Get and set barangay
+                barangayaddress = jsonObject.getJSONObject("address").get("suburb").toString();
+                Log.d("testpandebug,requestpex", barangayaddress);
+                if(barangayaddress.toLowerCase().equals("malanday")){
+                    barangaypriority = "true";
+                }
+                Log.d("testpandebug, brgprior", barangaypriority);
+
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -461,6 +475,15 @@ public class RequestFragment extends Fragment {
 
     //Rescue request details to database
     private void sendRescueRequest(){
+
+        //Set value for notPriority node
+        if(notvulnerable.equals("false") || barangaypriority.equals("true")){
+            notpriority = "false";
+        }
+        Log.d("testpandebug, notvul", notvulnerable);
+        Log.d("testpandebug, brgprior", barangaypriority);
+        Log.d("testpandebug, priority", notpriority);
+
         String path = "/Rescue Requests/New Rescue Requests"; //Database path
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
@@ -473,7 +496,7 @@ public class RequestFragment extends Fragment {
         databaseReference.child(firebaseAuth.getUid()).child("requestDateTimeRescued").setValue("");
         databaseReference.child(firebaseAuth.getUid()).child("urgentFlag").setValue("0");
         databaseReference.child(firebaseAuth.getUid()).child("rescueTeam").setValue("");
-        databaseReference.child(firebaseAuth.getUid()).child("notVulnerable").setValue(notvulnerable);
+        databaseReference.child(firebaseAuth.getUid()).child("notPriority").setValue(notpriority);
         databaseReference.child(firebaseAuth.getUid()).child("receivedTimestamp").setValue("");
 
     }

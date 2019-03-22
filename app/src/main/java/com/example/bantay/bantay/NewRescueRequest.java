@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class NewRescueRequest extends Fragment {
     public TextView requestfirstname, requestcontactnumber, requestlocation, requestlandmarks,
             requestpax, requestvulnerability, requestspecification, newrequesttv;
     public Button urgent;
-    public String urgentflag;
+    public String urgentflag, notpriority;
     public FirebaseAuth firebaseAuth;
     public FirebaseDatabase firebaseDatabase;
     public Handler handler = new Handler();
@@ -147,8 +148,16 @@ public class NewRescueRequest extends Fragment {
                 requestlandmarks.setText(requestEntries.getRequestLandmarks());
                 requestpax.setText(requestEntries.getRequestPax());
                 requestspecification.setText(requestEntries.getRequestSpecific());
-                urgentflag = dataSnapshot.child("urgentFlag").getValue(String.class);
+                urgentflag = dataSnapshot.child("urgentFlag").getValue().toString();
+                notpriority = dataSnapshot.child("notPriority").getValue().toString();
 
+                Log.d("urgentbutton", urgentflag);
+                if(urgentflag.equals("1")){
+                    urgent.setEnabled(false);
+                    urgent.setVisibility(View.INVISIBLE);
+                    newrequesttv.setText("You sent an urgent notification");
+                    newrequesttv.setTextColor(Color.GREEN);
+                }
             }
 
             @Override
@@ -167,6 +176,9 @@ public class NewRescueRequest extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
         databaseReference.child(firebaseAuth.getUid()).child("urgentFlag").setValue("1");
+        if(notpriority.equals("true")){
+            databaseReference.child(firebaseAuth.getUid()).child("notPriority").setValue("false");
+        }
     }
 
 
