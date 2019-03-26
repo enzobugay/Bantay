@@ -2,10 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/newrescuerequest"
+    android:id="@+id/deployedrescuerequest"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewRescueRequest" >
+    tools:context=".DeployedRescueRequest">
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,7 +21,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/newrequestfirstname"
+                android:id="@+id/deployedrequestfirstname"
                 android:layout_width="266dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textView39"
@@ -39,10 +40,10 @@
                 app:layout_constraintVertical_bias="0.168" />
 
             <TextView
-                android:id="@+id/newrequestcontactnum"
+                android:id="@+id/deployedrequestcontactnum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestfirstname"
+                android:layout_below="@+id/deployedrequestfirstname"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -58,10 +59,10 @@
                 app:layout_constraintVertical_bias="0.225" />
 
             <TextView
-                android:id="@+id/newrequestlocation"
+                android:id="@+id/deployedrequestlocation"
                 android:layout_width="139dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestcontactnum"
+                android:layout_below="@+id/deployedrequestcontactnum"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -77,10 +78,10 @@
                 app:layout_constraintVertical_bias="0.271" />
 
             <TextView
-                android:id="@+id/newrequestlandmarks"
+                android:id="@+id/deployedrequestlandmarks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestlocation"
+                android:layout_below="@+id/deployedrequestlocation"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -96,10 +97,10 @@
                 app:layout_constraintVertical_bias="0.347" />
 
             <TextView
-                android:id="@+id/newrequestpax"
+                android:id="@+id/deployedrequestpax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestlandmarks"
+                android:layout_below="@+id/deployedrequestlandmarks"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -115,10 +116,10 @@
                 app:layout_constraintVertical_bias="0.413" />
 
             <TextView
-                android:id="@+id/newrequestvulnerability"
+                android:id="@+id/deployedrequestvulnerability"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestpax"
+                android:layout_below="@+id/deployedrequestpax"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -134,10 +135,10 @@
                 app:layout_constraintVertical_bias="0.455" />
 
             <TextView
-                android:id="@+id/newrequestspecification"
+                android:id="@+id/deployedrequestspecification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestvulnerability"
+                android:layout_below="@+id/deployedrequestvulnerability"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
@@ -233,7 +234,7 @@
                 android:id="@+id/textView35"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestlocation"
+                android:layout_below="@+id/deployedrequestlocation"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="8dp"
@@ -327,16 +328,16 @@
                 android:id="@+id/newrequesttv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/urgentbtn"
+                android:layout_below="@+id/deployedrequestspecification"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginStart="34dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="26dp"
                 android:layout_marginBottom="8dp"
-                android:text="Click this button if your request has not yet been acknowledged after 5 minutes!"
+                android:text="Your rescue request has been acknowledged. Rescue teams will arrive as soon as possible!"
                 android:textAlignment="center"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@android:color/holo_green_light"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -345,26 +346,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.798" />
 
-            <Button
-                android:id="@+id/urgentbtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/newrequestspecification"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="80dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="80dp"
-                android:layout_marginBottom="8dp"
-                android:clickable="false"
-                android:text="URGENT"
-                android:textColor="@android:color/holo_red_light"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.679" />
         </RelativeLayout>
     </ScrollView>
+
 </android.support.constraint.ConstraintLayout>
+

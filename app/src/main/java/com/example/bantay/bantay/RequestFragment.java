@@ -4,6 +4,7 @@ package com.example.bantay.bantay;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,6 +53,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,6 +101,9 @@ public class RequestFragment extends Fragment {
     LocationManager locationManager;
     String provider;
     double dalat,dalng;
+
+    int count = 0;
+    public ProgressDialog progressDialog;
 
     public RequestFragment() {
         // Required empty public constructor
@@ -319,6 +325,10 @@ public class RequestFragment extends Fragment {
     //Get name, contact number, and location of user
     private void loadEntries(){
 
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
         requestfirstname = (TextView)getView().findViewById(R.id.requestfirstname);
         requestcontactnumber = (TextView)getView().findViewById(R.id.requestcontactnumber);
 
@@ -336,6 +346,37 @@ public class RequestFragment extends Fragment {
                 String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
                 requestfirstname.setText(rfirstnameb + " " + requestlastname);
                 requestcontactnumber.setText(rcontactnumber);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                count++;
+
+                if(count >= dataSnapshot.getChildrenCount()){
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
 

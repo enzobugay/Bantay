@@ -102,9 +102,9 @@ public class ChangePasswordFragment extends Fragment {
         newpw = getView().findViewById(R.id.newpw);
         confirmpw = getView().findViewById(R.id.confirmnewpw);
 
-        oldPassword = oldpw.getText().toString();
-        newPassword = newpw.getText().toString();
-        confirmPassword = confirmpw.getText().toString();
+        oldPassword = oldpw.getText().toString().trim();
+        newPassword = newpw.getText().toString().trim();
+        confirmPassword = confirmpw.getText().toString().trim();
 
         if(oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()){
             Toast.makeText(getActivity(), "Please fill up all fields", Toast.LENGTH_SHORT).show();

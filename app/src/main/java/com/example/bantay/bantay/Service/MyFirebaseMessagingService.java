@@ -13,8 +13,15 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.bantay.bantay.AcknowledgeNotif;
+import com.example.bantay.bantay.AlertNotif;
+import com.example.bantay.bantay.AlertNotif2;
+import com.example.bantay.bantay.AlertNotif3;
 import com.example.bantay.bantay.CctvFragment;
 import com.example.bantay.bantay.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -27,12 +34,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        if(remoteMessage.getData().isEmpty()) {
-            showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
-        }
-        else{
-            showNotification(remoteMessage.getData());
-        }
+        showNotification(remoteMessage.getData());
+       // if (remoteMessage.getData().isEmpty()) {
+            //showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        /*} else {
+
+        }*/
     }
 
     private void showNotification(Map<String, String> data) {
@@ -40,40 +47,66 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String title = data.get("title").toString();
         String body = data.get("body").toString();
 
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(this, AlertNotif.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intent1 = new Intent(this, AlertNotif2.class);
+        PendingIntent pendingIntent1 = PendingIntent.getActivity(this, 2, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intent2 = new Intent(this, AlertNotif3.class);
+        PendingIntent pendingIntent2 = PendingIntent.getActivity(this, 3, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intent3 = new Intent(this, AcknowledgeNotif.class);
+        PendingIntent pendingIntent3 = PendingIntent.getActivity(this, 4, intent3, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+
         String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay.test";
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
 
-            notificationChannel.setDescription("Bantay Test");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
-            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
             notificationManager.createNotificationChannel(notificationChannel);
+            notificationChannel.setVibrationPattern(new long[]{500, 500, 500, 500, 500, 500, 500, 500, 500});
+
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
 
-        notificationBuilder.setAutoCancel(true)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.marikinalogo)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setContentInfo("Info");
+        notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+        notificationBuilder.setWhen(System.currentTimeMillis());
+        notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
+        notificationBuilder.setContentTitle(title);
+        notificationBuilder.setContentText(body);
+        if(title.toLowerCase().contains("1")){
+            notificationBuilder.setContentIntent(pendingIntent);
+        }
+        else if(title.toLowerCase().contains("2")){
+            notificationBuilder.setContentIntent(pendingIntent1);
+        }
+        else if(title.toLowerCase().contains("3")){
+            notificationBuilder.setContentIntent(pendingIntent2);
+        }
+        else{
+            notificationBuilder.setContentIntent(pendingIntent3);
 
+        }
         notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
     }
 
-    private void showNotification(String title, String body) {
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+   /* private void showNotification(String title, String body) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay.test";
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
 
-            notificationChannel.setDescription("Bantay Test");
+
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
@@ -87,15 +120,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.marikinalogo)
                 .setContentTitle(title)
-                .setContentText(body)
-                .setContentInfo("Info");
+                .setContentText(body);
 
-        if(title.equals("test")){
-            Intent intent = new Intent(this, CctvFragment.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-            notificationBuilder.setContentIntent(pendingIntent);
-        }
 
         notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
     }
@@ -103,7 +129,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
+        String deviceToken = s;
+        Log.d("TokenDebug", deviceToken);
 
-        Log.d("TokenDebug", s);
-    }
+
+    }*/
 }

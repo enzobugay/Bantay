@@ -23,6 +23,7 @@ import com.firebase.client.FirebaseError;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +41,8 @@ public class AccountFragment extends Fragment {
     private TextView profilefirstname, profileaddress, profilebarangay, profilenumber, profileemail;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
+    int count = 0;
+    public ProgressDialog progressDialog;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -103,6 +106,10 @@ public class AccountFragment extends Fragment {
     //Load Account Details Method
     private void loadEntries(){
 
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
         profilefirstname = (TextView)getView().findViewById(R.id.tvfirstname);
         profileaddress = (TextView)getView().findViewById(R.id.tvaddress);
         profilebarangay = (TextView)getView().findViewById(R.id.tvbarangay);
@@ -123,6 +130,38 @@ public class AccountFragment extends Fragment {
                 profilebarangay.setText(accountDetails.getUserBarangay());
                 profilenumber.setText(accountDetails.getUserContactNumber());
                 profileemail.setText(accountDetails.getUserEmail());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                count++;
+
+                if(count >= dataSnapshot.getChildrenCount()){
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
             }
 

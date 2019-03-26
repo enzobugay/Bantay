@@ -1,6 +1,7 @@
 package com.example.bantay.bantay;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -316,8 +317,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
                             if (task.isSuccessful() && task.getResult() != null) {
                                 Location currentLocation = (Location) task.getResult();
                                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM);
-                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+
 
                                 //Get location address
                                 locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -345,6 +345,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     //Get location address
     private class GetAddress extends AsyncTask<String,Void,String> {
 
+        ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Fetching location...");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
 
         @Override
         protected String doInBackground(String... strings) {
@@ -386,6 +395,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            if(dialog.isShowing())
+                dialog.dismiss();
+            moveCamera(new LatLng(dalat, dalng), DEFAULT_ZOOM);
         }
     }
 }

@@ -17,6 +17,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AcknowledgeNotif"></activity>
+        <activity android:name=".AlertNotif3" />
+        <activity android:name=".AlertNotif2" />
+        <activity android:name=".AlertNotif" />
         <activity android:name=".WelcomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,7 +37,8 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterActivity"
+        <activity
+            android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".HomeActivity" />

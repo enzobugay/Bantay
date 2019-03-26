@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -97,8 +99,10 @@ public class NewRescueRequest extends Fragment {
                  }
              });
 
+
         return view;
     }
+
 
     @Override
     public void onPause(){
@@ -141,22 +145,27 @@ public class NewRescueRequest extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
-                requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
-                requestcontactnumber.setText(requestEntries.getRequestContactNumber());
-                requestlocation.setText(requestEntries.getRequestLocation());
-                requestlandmarks.setText(requestEntries.getRequestLandmarks());
-                requestpax.setText(requestEntries.getRequestPax());
-                requestspecification.setText(requestEntries.getRequestSpecific());
-                urgentflag = dataSnapshot.child("urgentFlag").getValue().toString();
-                notpriority = dataSnapshot.child("notPriority").getValue().toString();
+                if(dataSnapshot.exists()) {
+                    RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
+                    requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
+                    requestcontactnumber.setText(requestEntries.getRequestContactNumber());
+                    requestlocation.setText(requestEntries.getRequestLocation());
+                    requestlandmarks.setText(requestEntries.getRequestLandmarks());
+                    requestpax.setText(requestEntries.getRequestPax());
+                    requestspecification.setText(requestEntries.getRequestSpecific());
+                    urgentflag = dataSnapshot.child("urgentFlag").getValue().toString();
+                    notpriority = dataSnapshot.child("notPriority").getValue().toString();
 
-                Log.d("urgentbutton", urgentflag);
-                if(urgentflag.equals("1")){
-                    urgent.setEnabled(false);
-                    urgent.setVisibility(View.INVISIBLE);
-                    newrequesttv.setText("You sent an urgent notification");
-                    newrequesttv.setTextColor(Color.GREEN);
+                    Log.d("urgentbutton", urgentflag);
+                    if (urgentflag.equals("1")) {
+                        urgent.setEnabled(false);
+                        urgent.setVisibility(View.INVISIBLE);
+                        newrequesttv.setText("You sent an urgent notification");
+                        newrequesttv.setTextColor(Color.GREEN);
+                    }
+                }
+                else{
+                    setRequestFragment();
                 }
             }
 
@@ -180,7 +189,12 @@ public class NewRescueRequest extends Fragment {
             databaseReference.child(firebaseAuth.getUid()).child("notPriority").setValue("false");
         }
     }
-
-
-
+    //Go to SetRequestFragment
+    public void setRequestFragment(){
+        SetRequestFragment setRequestFragment = new SetRequestFragment();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_nav, setRequestFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
 }
