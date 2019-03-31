@@ -1,6 +1,7 @@
 package com.example.bantay.bantay;
 
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,8 +30,12 @@ public class DeployedRescueRequest extends Fragment {
 
     public TextView requestfirstname, requestcontactnumber, requestlocation, requestlandmarks,
             requestpax, requestvulnerability, requestspecification, newrequesttv;
+    public String allvul;
     public FirebaseAuth firebaseAuth;
     public FirebaseDatabase firebaseDatabase;
+
+    int count = 0;
+    public ProgressDialog progressDialog;
 
     public DeployedRescueRequest() {
         // Required empty public constructor
@@ -56,6 +62,10 @@ public class DeployedRescueRequest extends Fragment {
 
     private void loadEntries(){
 
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
         requestfirstname = getView().findViewById(R.id.deployedrequestfirstname);
         requestcontactnumber = getView().findViewById(R.id.deployedrequestcontactnum);
         requestlocation = getView().findViewById(R.id.deployedrequestlocation);
@@ -69,6 +79,37 @@ public class DeployedRescueRequest extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
 
+        databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                count++;
+
+                if(count >= dataSnapshot.getChildrenCount()){
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -81,6 +122,8 @@ public class DeployedRescueRequest extends Fragment {
                     requestlandmarks.setText(requestEntries.getRequestLandmarks());
                     requestpax.setText(requestEntries.getRequestPax());
                     requestspecification.setText(requestEntries.getRequestSpecific());
+                    allvul = dataSnapshot.child("allVulnerability").getValue().toString();
+                    requestvulnerability.setText(allvul);
                 }
                 else{
                     setRequestFragment();

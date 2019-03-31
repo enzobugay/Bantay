@@ -29,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    public Handler handler = new Handler();
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("LOGIN DISABLER", "PASSED");
+            login.setEnabled(true);
+        }
+    };
+
     int attemptCounter = 5;
 
     @Override
@@ -88,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Login method
-    private void validate(String useremail, String userpassword){
+    private void validate(final String useremail, String userpassword){
 
         progressDialog.setMessage("Logging in...");
         progressDialog.show();
@@ -111,24 +120,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else{
                         attemptCounter--;
+                        Log.d("LOGIN COUNTER", String.valueOf(attemptCounter));
                         progressDialog.dismiss();
                         Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
-                        if(attemptCounter == 0){
+                        if(attemptCounter % 5 == 0){
                             Log.d("LOGIN COUNTER", "PASSED");
-                            new Handler().postDelayed(new Runnable() {
+                            login.setEnabled(false);
+                            Toast.makeText(MainActivity.this, "You reached 5 attempts, please wait 30 secs to re-login", Toast.LENGTH_LONG).show();
+                            handler.postDelayed(runnable, 30000);
+
+                            /*new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     Log.d("LOGIN DISABLER", "PASSED");
-                                    login.setEnabled(false);
-                                    Toast.makeText(MainActivity.this, "You reached 5 attempts, please wait 30 secs to re-login", Toast.LENGTH_LONG).show();
+                                    login.setEnabled(true);
                                 }
-                            }, 30000);
+                            }, 30000);*/
                         }
                     }
                 }
             });
         }
-
 
     }
 

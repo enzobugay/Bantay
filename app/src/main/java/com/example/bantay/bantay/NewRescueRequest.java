@@ -2,12 +2,14 @@ package com.example.bantay.bantay;
 
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,17 +43,12 @@ public class NewRescueRequest extends Fragment {
     public TextView requestfirstname, requestcontactnumber, requestlocation, requestlandmarks,
             requestpax, requestvulnerability, requestspecification, newrequesttv;
     public Button urgent;
-    public String urgentflag, notpriority;
+    public String urgentflag, notpriority, allvul;
     public FirebaseAuth firebaseAuth;
     public FirebaseDatabase firebaseDatabase;
-    public Handler handler = new Handler();
-    public Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            urgent.setEnabled(true);
-            handler.postDelayed(this, 5000);
-        }
-    };
+
+    int count = 0;
+    public ProgressDialog progressDialog;
 
     public NewRescueRequest() {
         // Required empty public constructor
@@ -66,56 +63,9 @@ public class NewRescueRequest extends Fragment {
             urgent = view.findViewById(R.id.urgentbtn);
             newrequesttv = view.findViewById(R.id.newrequesttv);
              urgent.setVisibility(View.VISIBLE);
-             urgent.setEnabled(false);
-             handler.postDelayed(runnable, 5000);
-             urgent.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-
-                     //Alert dialog
-                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                     alertDialog.setCancelable(false);
-                     alertDialog.setTitle("Send an urgent notification?");
-                     alertDialog.setMessage("An urgent notification of your request will be sent to Marikina City Rescue 161. Send?");
-                     alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                         @Override
-                         public void onClick(DialogInterface dialog, int which) {
-                             //Do nothing
-                         }
-                     });
-                     alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                         @Override
-                         public void onClick(DialogInterface dialog, int which) {
-                             urgentFlag();
-                             urgent.setEnabled(false);
-                             urgent.setVisibility(View.INVISIBLE);
-                             newrequesttv.setText("You sent an urgent notification");
-                             newrequesttv.setTextColor(Color.GREEN);
-                         }
-                     });
-                     alertDialog.show();
-
-
-                 }
-             });
 
 
         return view;
-    }
-
-
-    @Override
-    public void onPause(){
-        handler.removeCallbacks(runnable);
-        super.onPause();
-
-    }
-
-    @Override
-    public void onResume(){
-        handler.postDelayed(runnable, 5000);
-        super.onResume();
-
     }
 
     @Override
@@ -127,6 +77,10 @@ public class NewRescueRequest extends Fragment {
 
 
     private void loadEntries(){
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
 
         requestfirstname = getView().findViewById(R.id.newrequestfirstname);
         requestcontactnumber = getView().findViewById(R.id.newrequestcontactnum);
@@ -140,6 +94,37 @@ public class NewRescueRequest extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
+
+        databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                count++;
+
+                if(count >= dataSnapshot.getChildrenCount()){
+                    progressDialog.dismiss();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -155,6 +140,9 @@ public class NewRescueRequest extends Fragment {
                     requestspecification.setText(requestEntries.getRequestSpecific());
                     urgentflag = dataSnapshot.child("urgentFlag").getValue().toString();
                     notpriority = dataSnapshot.child("notPriority").getValue().toString();
+                    allvul = dataSnapshot.child("allVulnerability").getValue().toString();
+                    requestvulnerability.setText(allvul);
+                    final long time = (long) dataSnapshot.child("requestTimestamp").getValue();
 
                     Log.d("urgentbutton", urgentflag);
                     if (urgentflag.equals("1")) {
@@ -163,6 +151,47 @@ public class NewRescueRequest extends Fragment {
                         newrequesttv.setText("You sent an urgent notification");
                         newrequesttv.setTextColor(Color.GREEN);
                     }
+
+                    Log.d("URGENT", String.valueOf(time));
+                    urgent.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if((time + (5*60*1000)) > System.currentTimeMillis()){
+                                long timer = (time + (5*60*1000)) - System.currentTimeMillis();
+                                Date date = new Date(timer);
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                                String newtimer = simpleDateFormat.format(date);
+                                Toast.makeText(getActivity(), "You may send an urgent notification after 5 minutes! "+newtimer+" left!", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+
+                                //Alert dialog
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                alertDialog.setCancelable(false);
+                                alertDialog.setTitle("Send an urgent notification?");
+                                alertDialog.setMessage("An urgent notification of your request will be sent to Marikina City Rescue 161. Send?");
+                                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //Do nothing
+                                    }
+                                });
+                                alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        urgentFlag();
+                                        urgent.setEnabled(false);
+                                        urgent.setVisibility(View.INVISIBLE);
+                                        newrequesttv.setText("You sent an urgent notification");
+                                        newrequesttv.setTextColor(Color.GREEN);
+                                    }
+                                });
+                                alertDialog.show();
+                            }
+
+                        }
+                    });
                 }
                 else{
                     setRequestFragment();
@@ -174,7 +203,6 @@ public class NewRescueRequest extends Fragment {
 
             }
         });
-
     }
 
 

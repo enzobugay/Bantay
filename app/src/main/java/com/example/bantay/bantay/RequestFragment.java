@@ -21,12 +21,14 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.NavigationMenu;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.SearchEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +88,10 @@ public class RequestFragment extends Fragment {
     public CheckBox requestpwd, requestsenior, requestinfant, requestmedical, requestother;
 
     public String rfirstname, rfirstnameb, rlastname, requestlastname, rcontactnum, rlocation, rlandmarks, rpax, rpwd, rsenior,
-            rinfant, rmedical, rother, rspecific, notvulnerable, address, barangayaddress;
+            rinfant, rmedical, rother, rspecific, notvulnerable, address, barangayaddress,
+
+
+            pwd = "", senior = "", infant = "", medical = "", other = "", allvul;
 
     public String notpriority = "true";
     public String barangaypriority = "false";
@@ -268,6 +273,16 @@ public class RequestFragment extends Fragment {
     //Get location address
     private class GetAddress extends AsyncTask<String,Void,String> {
 
+        ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Fetching location...");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }
+
         @Override
         protected String doInBackground(String... strings) {
             try{
@@ -302,7 +317,8 @@ public class RequestFragment extends Fragment {
                 //Get and set barangay
                 barangayaddress = jsonObject.getJSONObject("address").get("suburb").toString();
                 Log.d("testpandebug,requestpex", barangayaddress);
-                if(barangayaddress.toLowerCase().equals("malanday")){
+                if(barangayaddress.toLowerCase().equals("malanday") || barangayaddress.toLowerCase().equals("tumana")
+                        || barangayaddress.toLowerCase().equals("nangka")){
                     barangaypriority = "true";
                 }
                 Log.d("testpandebug, brgprior", barangaypriority);
@@ -312,6 +328,8 @@ public class RequestFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            if(dialog.isShowing())
+                dialog.dismiss();
 
         }
     }
@@ -336,24 +354,6 @@ public class RequestFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path); //Residents path
-
-        databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                rfirstnameb = dataSnapshot.child("userFirstName").getValue(String.class);
-                requestlastname = dataSnapshot.child("userLastName").getValue(String.class);
-                String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
-                requestfirstname.setText(rfirstnameb + " " + requestlastname);
-                requestcontactnumber.setText(rcontactnumber);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
@@ -386,6 +386,23 @@ public class RequestFragment extends Fragment {
             }
         });
 
+        databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                rfirstnameb = dataSnapshot.child("userFirstName").getValue(String.class);
+                requestlastname = dataSnapshot.child("userLastName").getValue(String.class);
+                String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
+                requestfirstname.setText(rfirstnameb + " " + requestlastname);
+                requestcontactnumber.setText(rcontactnumber);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     //Get request entries of user
 
@@ -411,11 +428,13 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(requestpwd.isChecked()){
+                    pwd = "PWD  ";
                     rpwd = "true";
                     notvulnerable = "false";
                 }else{
                     rpwd = "false";
                     notvulnerable = "true";
+                    pwd = "";
                 }
             }
         });
@@ -424,11 +443,13 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(requestsenior.isChecked()){
+                    senior = "Senior Citizen  ";
                     rsenior = "true";
                     notvulnerable = "false";
                 }else{
                     rsenior = "false";
                     notvulnerable = "true";
+                    senior = "";
                 }
             }
         });
@@ -437,11 +458,13 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(requestinfant.isChecked()){
+                    infant = "Infant  ";
                     rinfant = "true";
                     notvulnerable = "false";
                 }else{
                     rinfant = "false";
                     notvulnerable = "true";
+                    infant = "";
                 }
             }
         });
@@ -450,11 +473,13 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(requestmedical.isChecked()){
+                    medical = "Medical Conditions  ";
                     rmedical = "true";
                     notvulnerable = "false";
                 }else{
                     rmedical = "false";
                     notvulnerable = "true";
+                    medical = "";
                 }
             }
         });
@@ -463,15 +488,16 @@ public class RequestFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(requestother.isChecked()){
+                    other = "Other";
                     rother = "true";
                     notvulnerable = "false";
                 }else{
                     rother = "false";
                     notvulnerable = "true";
+                    other = "";
                 }
             }
         });
-
     }
 
 
@@ -517,6 +543,7 @@ public class RequestFragment extends Fragment {
     //Rescue request details to database
     private void sendRescueRequest(){
 
+        allvul = pwd+senior+infant+medical+other;
         //Set value for notPriority node
         if(notvulnerable.equals("false") || barangaypriority.equals("true")){
             notpriority = "false";
@@ -539,6 +566,7 @@ public class RequestFragment extends Fragment {
         databaseReference.child(firebaseAuth.getUid()).child("rescueTeam").setValue("");
         databaseReference.child(firebaseAuth.getUid()).child("notPriority").setValue(notpriority);
         databaseReference.child(firebaseAuth.getUid()).child("receivedTimestamp").setValue("");
+        databaseReference.child(firebaseAuth.getUid()).child("allVulnerability").setValue(allvul);
 
     }
 
@@ -559,8 +587,16 @@ public class RequestFragment extends Fragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
-        /*BottomNavigationView bottomNavigationView = getView().findViewById(R.id.bottom_nav);
-        bottomNavigationView.getMenu().findItem(R.id.nav_map).setChecked(true);*/
+        /*BottomNavigationView bottomNavigationView;
+        bottomNavigationView = getView().findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                return false;
+            }
+        });
+        bottomNavigationView.setSelectedItemId(R.id.nav_map);*/
+       // bottomNavigationView.getMenu().findItem(R.id.nav_map).setChecked(true);
     }
 
 

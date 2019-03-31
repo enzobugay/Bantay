@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.w3c.dom.Text;
 
@@ -84,6 +86,9 @@ public class AccountFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         firebaseAuth.signOut();
+                        String topicuid = firebaseAuth.getUid();
+                        Log.d("topicuid", topicuid);
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(topicuid);
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
                     }

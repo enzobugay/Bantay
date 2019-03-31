@@ -4,12 +4,16 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.admin.DeviceAdminInfo;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -44,8 +48,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void showNotification(Map<String, String> data) {
 
-        String title = data.get("title").toString();
-        String body = data.get("body").toString();
+        String title = data.get("title");
+        String body = data.get("body");
 
         Intent intent = new Intent(this, AlertNotif.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -59,30 +63,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent3 = new Intent(this, AcknowledgeNotif.class);
         PendingIntent pendingIntent3 = PendingIntent.getActivity(this, 4, intent3, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
-
+        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.siren);
+        /*Vibrator vibrator = (Vibrator)this.getApplicationContext().getSystemService(getApplicationContext().VIBRATOR_SERVICE);
+        vibrator.vibrate(500);*/
         String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay.test";
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
 
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
-            notificationManager.createNotificationChannel(notificationChannel);
+            notificationChannel.enableVibration(true);
             notificationChannel.setVibrationPattern(new long[]{500, 500, 500, 500, 500, 500, 500, 500, 500});
-
+            notificationChannel.setSound(sound, audioAttributes);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
 
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+        notificationBuilder.setAutoCancel(false);
         notificationBuilder.setWhen(System.currentTimeMillis());
         notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
         notificationBuilder.setContentTitle(title);
         notificationBuilder.setContentText(body);
+        notificationBuilder.setSound(sound);
         if(title.toLowerCase().contains("1")){
             notificationBuilder.setContentIntent(pendingIntent);
         }
@@ -96,6 +105,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBuilder.setContentIntent(pendingIntent3);
 
         }
+
         notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
     }
 
