@@ -47,7 +47,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(Map<String, String> data) {
-
         String title = data.get("title");
         String body = data.get("body");
 
@@ -86,7 +85,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
 
-        notificationBuilder.setAutoCancel(false);
+        notificationBuilder.setAutoCancel(true);
         notificationBuilder.setWhen(System.currentTimeMillis());
         notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
         notificationBuilder.setContentTitle(title);
