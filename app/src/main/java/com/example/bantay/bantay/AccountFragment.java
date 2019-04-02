@@ -85,10 +85,10 @@ public class AccountFragment extends Fragment {
                 alertDialog.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        firebaseAuth.signOut();
                         String topicuid = firebaseAuth.getUid();
                         Log.d("topicuid", topicuid);
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(topicuid);
+                        firebaseAuth.signOut();
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
                     }
