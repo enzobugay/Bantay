@@ -42,7 +42,8 @@
             android:name=".RegisterActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".ForgotPasswordActivity" />
-        <activity android:name=".HomeActivity" />
+        <activity android:name=".HomeActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
         <service android:name=".Service.MyFirebaseMessagingService">
             <intent-filter>

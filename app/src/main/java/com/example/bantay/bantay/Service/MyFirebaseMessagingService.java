@@ -63,8 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent3 = PendingIntent.getActivity(this, 4, intent3, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.siren);
-        /*Vibrator vibrator = (Vibrator)this.getApplicationContext().getSystemService(getApplicationContext().VIBRATOR_SERVICE);
-        vibrator.vibrate(500);*/
+
         String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay.test";
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -78,7 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.RED);
             notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{500, 500, 500, 500, 500, 500, 500, 500, 500});
+            notificationChannel.setVibrationPattern(new long[]{500, 1000, 500, 1000});
             notificationChannel.setSound(sound, audioAttributes);
             notificationManager.createNotificationChannel(notificationChannel);
         }
@@ -91,6 +90,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationBuilder.setContentTitle(title);
         notificationBuilder.setContentText(body);
         notificationBuilder.setSound(sound);
+        notificationBuilder.setVibrate(new long[]{500, 1000, 500, 1000});
         if(title.toLowerCase().contains("1")){
             notificationBuilder.setContentIntent(pendingIntent);
         }
