@@ -62,51 +62,98 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent3 = new Intent(this, AcknowledgeNotif.class);
         PendingIntent pendingIntent3 = PendingIntent.getActivity(this, 4, intent3, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "android.resource://"+getApplicationContext().getPackageName()+"/"+R.raw.siren);
+        Uri defaultsound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri alarmsound = Uri.parse("android.resource://" + getApplicationContext().getPackageName() + "/" + R.raw.siren); //ContentResolver.SCHEME_ANDROID_RESOURCE +
 
-        String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay.test";
+        String NOTIFICATION_CHANNEL_ID = "com.example.bantay.bantay";
+        String NOTIFICATION_CHANNEL_ID2 = "com.example.bantay.bantay.ack";
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_DEFAULT);
+        if(title.toLowerCase().contains("level")) {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
 
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build();
+            notificationBuilder.setAutoCancel(true);
+            notificationBuilder.setPriority(Notification.PRIORITY_MAX);
+            notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+            notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            notificationBuilder.setDefaults(Notification.DEFAULT_SOUND);
+            notificationBuilder.setWhen(System.currentTimeMillis());
+            notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
+            notificationBuilder.setContentTitle(title);
+            notificationBuilder.setContentText(body);
+            notificationBuilder.setVibrate(new long[]{500, 1000, 500, 1000, 500, 1000});
 
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.RED);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{500, 1000, 500, 1000});
-            notificationChannel.setSound(sound, audioAttributes);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
+            if (title.toLowerCase().contains("1")) {
+                notificationBuilder.setContentIntent(pendingIntent);
+                notificationBuilder.setSound(alarmsound);
+            } else if (title.toLowerCase().contains("2")) {
+                notificationBuilder.setContentIntent(pendingIntent1);
+                notificationBuilder.setSound(alarmsound);
+            } else if (title.toLowerCase().contains("3")) {
+                notificationBuilder.setContentIntent(pendingIntent2);
+                notificationBuilder.setSound(alarmsound);
+            }/* else {
+                notificationBuilder.setContentIntent(pendingIntent3);
+                notificationBuilder.setSound(defaultsound);
+            }*/
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification", NotificationManager.IMPORTANCE_HIGH);
 
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setWhen(System.currentTimeMillis());
-        notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
-        notificationBuilder.setContentTitle(title);
-        notificationBuilder.setContentText(body);
-        notificationBuilder.setSound(sound);
-        notificationBuilder.setVibrate(new long[]{500, 1000, 500, 1000});
-        if(title.toLowerCase().contains("1")){
-            notificationBuilder.setContentIntent(pendingIntent);
-        }
-        else if(title.toLowerCase().contains("2")){
-            notificationBuilder.setContentIntent(pendingIntent1);
-        }
-        else if(title.toLowerCase().contains("3")){
-            notificationBuilder.setContentIntent(pendingIntent2);
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .build();
+
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setSound(alarmsound, audioAttributes);
+                notificationChannel.setVibrationPattern(new long[]{500, 1000, 500, 1000, 500, 1000});
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+
+            notificationManager.notify(0, notificationBuilder.build()); //new Random().nextInt()
         }
         else{
-            notificationBuilder.setContentIntent(pendingIntent3);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID2);
 
+            notificationBuilder.setAutoCancel(true);
+            notificationBuilder.setPriority(Notification.PRIORITY_MAX);
+            notificationBuilder.setDefaults(Notification.DEFAULT_ALL);
+            notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
+            notificationBuilder.setDefaults(Notification.DEFAULT_SOUND);
+            notificationBuilder.setWhen(System.currentTimeMillis());
+            notificationBuilder.setSmallIcon(R.drawable.marikinalogo);
+            notificationBuilder.setContentTitle(title);
+            notificationBuilder.setContentText(body);
+            notificationBuilder.setVibrate(new long[]{500, 1000, 500, 1000, 500, 1000});
+
+                notificationBuilder.setContentIntent(pendingIntent3);
+                notificationBuilder.setSound(defaultsound);
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID2, "Notification", NotificationManager.IMPORTANCE_HIGH);
+
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .build();
+
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setSound(defaultsound, audioAttributes);
+                notificationChannel.setVibrationPattern(new long[]{500, 1000, 500, 1000, 500, 1000});
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+
+            notificationManager.notify(0, notificationBuilder.build()); //new Random().nextInt()
         }
-
-        notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
     }
+
 
    /* private void showNotification(String title, String body) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

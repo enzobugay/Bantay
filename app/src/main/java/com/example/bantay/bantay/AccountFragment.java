@@ -113,6 +113,8 @@ public class AccountFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         profilefirstname = (TextView)getView().findViewById(R.id.tvfirstname);
@@ -125,25 +127,6 @@ public class AccountFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference(path);
-
-        databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                AccountDetails accountDetails = dataSnapshot.getValue(AccountDetails.class);
-                profilefirstname.setText(accountDetails.getUserFirstName() + " " + accountDetails.getUserLastName());
-                profileaddress.setText(accountDetails.getUserAddress());
-                profilebarangay.setText(accountDetails.getUserBarangay());
-                profilenumber.setText(accountDetails.getUserContactNumber());
-                profileemail.setText(accountDetails.getUserEmail());
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
 
         databaseReference.child(firebaseAuth.getUid()).addChildEventListener(new ChildEventListener() {
             @Override
@@ -167,6 +150,24 @@ public class AccountFragment extends Fragment {
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        databaseReference.child(firebaseAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                AccountDetails accountDetails = dataSnapshot.getValue(AccountDetails.class);
+                profilefirstname.setText(accountDetails.getUserFirstName() + " " + accountDetails.getUserLastName());
+                profileaddress.setText(accountDetails.getUserAddress());
+                profilebarangay.setText(accountDetails.getUserBarangay());
+                profilenumber.setText(accountDetails.getUserContactNumber());
+                profileemail.setText(accountDetails.getUserEmail());
 
             }
 

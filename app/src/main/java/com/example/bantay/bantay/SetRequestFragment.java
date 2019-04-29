@@ -103,6 +103,8 @@ public class SetRequestFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         final String newrescuerequest = "/Rescue Requests/New Rescue Requests"; //Database path
@@ -167,7 +169,7 @@ public class SetRequestFragment extends Fragment {
         RequestFragment requestFragment = new RequestFragment();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, requestFragment);
-        fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -176,7 +178,7 @@ public class SetRequestFragment extends Fragment {
         NewRescueRequest newRescueRequest = new NewRescueRequest();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, newRescueRequest);
-        fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -185,7 +187,7 @@ public class SetRequestFragment extends Fragment {
         DeployedRescueRequest deployedRescueRequest = new DeployedRescueRequest();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, deployedRescueRequest);
-        fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 

@@ -280,6 +280,7 @@ public class RequestFragment extends Fragment {
             super.onPreExecute();
             dialog.setMessage("Fetching location...");
             dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.show();
         }
 
@@ -291,6 +292,7 @@ public class RequestFragment extends Fragment {
                 String response;
                 HttpDataHandler http = new HttpDataHandler();
                 String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=%.4f&lon=%.4f&format=json",lat,lng);
+                //String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=14.6462&lon=121.0944&format=json",lat,lng);
                 response = http.GetHTTPData(url);
                 Log.d("testpandebug,requestbg", response);
                 Log.d("testpandebug,requestbg", url);
@@ -345,6 +347,8 @@ public class RequestFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         requestfirstname = (TextView)getView().findViewById(R.id.requestfirstname);
@@ -359,10 +363,6 @@ public class RequestFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 count++;
-
-                if(count >= dataSnapshot.getChildrenCount()){
-                    progressDialog.dismiss();
-                }
             }
 
             @Override
@@ -390,12 +390,19 @@ public class RequestFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                rfirstnameb = dataSnapshot.child("userFirstName").getValue(String.class);
-                requestlastname = dataSnapshot.child("userLastName").getValue(String.class);
-                String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
-                requestfirstname.setText(rfirstnameb + " " + requestlastname);
-                requestcontactnumber.setText(rcontactnumber);
+                if(count >= dataSnapshot.getChildrenCount()) {
 
+                    progressDialog.dismiss();
+                    rfirstnameb = dataSnapshot.child("userFirstName").getValue(String.class);
+                    requestlastname = dataSnapshot.child("userLastName").getValue(String.class);
+                    String rcontactnumber = dataSnapshot.child("userContactNumber").getValue(String.class);
+                    requestfirstname.setText(rfirstnameb + " " + requestlastname);
+                    requestcontactnumber.setText(rcontactnumber);
+
+                }
+                else{
+                    setRequestFragment();
+                }
             }
 
             @Override
@@ -531,9 +538,9 @@ public class RequestFragment extends Fragment {
         else if(rlocation.isEmpty()){
             Toast.makeText(getActivity(), "No location provided, please refresh location", Toast.LENGTH_SHORT).show();
         }
-        else if(!rlocation.isEmpty() && !rlocation.toLowerCase().contains("marikina")){
+       /* else if(!rlocation.isEmpty() && !rlocation.toLowerCase().contains("marikina")){
             Toast.makeText(getActivity(), "You cannot send a request outside Marikina City!", Toast.LENGTH_SHORT).show();
-        }
+        }*/
         else{
             result = true;
         }
@@ -575,7 +582,7 @@ public class RequestFragment extends Fragment {
         SetRequestFragment setRequestFragment = new SetRequestFragment();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, setRequestFragment);
-        fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 

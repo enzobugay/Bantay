@@ -101,6 +101,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     public void onResume(){
         super.onResume();
         initMap();
+        //verifyLocationAddress();
     }
 
     /*
@@ -369,6 +370,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
                 String url = String.format("https://nominatim.openstreetmap.org/reverse?format=json&lat=%.4f&lon=%.4f",lat,lng);*/
 
                 String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=%.4f&lon=%.4f&format=json",lat,lng);
+                //String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=14.6462&lon=121.0944&format=json",lat,lng);
                 response = http.GetHTTPData(url);
                 Log.d("testpandebug,doinbg", response);
                 Log.d("testpandebug,doinbg", url);
@@ -395,9 +397,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(dialog.isShowing())
+            if(dialog.isShowing()) {
                 dialog.dismiss();
-            moveCamera(new LatLng(dalat, dalng), DEFAULT_ZOOM);
+                moveCamera(new LatLng(dalat, dalng), DEFAULT_ZOOM);
+            }
+        }
+    }
+    public void verifyLocationAddress(){
+        mapAddress = getView().findViewById(R.id.mapAddress);
+        if(mapAddress.getText().toString().matches("") || mapAddress.getText().toString().length() < 0){
+            getDeviceLocation();
         }
     }
 }

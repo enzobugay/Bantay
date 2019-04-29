@@ -80,6 +80,8 @@ public class NewRescueRequest extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         requestfirstname = getView().findViewById(R.id.newrequestfirstname);
@@ -100,9 +102,7 @@ public class NewRescueRequest extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 count++;
 
-                if(count >= dataSnapshot.getChildrenCount()){
-                    progressDialog.dismiss();
-                }
+
             }
 
             @Override
@@ -131,67 +131,73 @@ public class NewRescueRequest extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.exists()) {
-                    RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
-                    requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
-                    requestcontactnumber.setText(requestEntries.getRequestContactNumber());
-                    requestlocation.setText(requestEntries.getRequestLocation());
-                    requestlandmarks.setText(requestEntries.getRequestLandmarks());
-                    requestpax.setText(requestEntries.getRequestPax());
-                    requestspecification.setText(requestEntries.getRequestSpecific());
-                    urgentflag = dataSnapshot.child("urgentFlag").getValue().toString();
-                    notpriority = dataSnapshot.child("notPriority").getValue().toString();
-                    allvul = dataSnapshot.child("allVulnerability").getValue().toString();
-                    requestvulnerability.setText(allvul);
-                    final long time = (long) dataSnapshot.child("requestTimestamp").getValue();
+                    if (count >= dataSnapshot.getChildrenCount()) {
+                        progressDialog.dismiss();
 
-                    Log.d("urgentbutton", urgentflag);
-                    if (urgentflag.equals("1")) {
-                        urgent.setEnabled(false);
-                        urgent.setVisibility(View.INVISIBLE);
-                        newrequesttv.setText("You sent an urgent notification");
-                        newrequesttv.setTextColor(Color.GREEN);
-                    }
+                        RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
+                        requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
+                        requestcontactnumber.setText(requestEntries.getRequestContactNumber());
+                        requestlocation.setText(requestEntries.getRequestLocation());
+                        requestlandmarks.setText(requestEntries.getRequestLandmarks());
+                        requestpax.setText(requestEntries.getRequestPax());
+                        requestspecification.setText(requestEntries.getRequestSpecific());
+                        notpriority = (String) dataSnapshot.child("notPriority").getValue();
+                        urgentflag = (String) dataSnapshot.child("urgentFlag").getValue();
+                        allvul = (String) dataSnapshot.child("allVulnerability").getValue();
+                        requestvulnerability.setText(allvul);
+                        final long time = (long) dataSnapshot.child("requestTimestamp").getValue();
 
-                    Log.d("URGENT", String.valueOf(time));
-                    urgent.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if((time + (5*60*1000)) > System.currentTimeMillis()){
-                                long timer = (time + (5*60*1000)) - System.currentTimeMillis();
-                                Date date = new Date(timer);
-                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-                                String newtimer = simpleDateFormat.format(date);
-                                Toast.makeText(getActivity(), "You may send an urgent notification after 5 minutes! "+newtimer+" left!", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-
-                                //Alert dialog
-                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                alertDialog.setCancelable(false);
-                                alertDialog.setTitle("Send an urgent notification?");
-                                alertDialog.setMessage("An urgent notification of your request will be sent to Marikina City Rescue 161. Send?");
-                                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        //Do nothing
-                                    }
-                                });
-                                alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        urgentFlag();
-                                        urgent.setEnabled(false);
-                                        urgent.setVisibility(View.INVISIBLE);
-                                        newrequesttv.setText("You sent an urgent notification");
-                                        newrequesttv.setTextColor(Color.GREEN);
-                                    }
-                                });
-                                alertDialog.show();
-                            }
-
+                        Log.d("urgentbutton", urgentflag);
+                        if (urgentflag.equals("1")) {
+                            urgent.setEnabled(false);
+                            urgent.setVisibility(View.INVISIBLE);
+                            newrequesttv.setText("You sent an urgent notification");
+                            newrequesttv.setTextColor(Color.GREEN);
                         }
-                    });
+
+                        Log.d("URGENT", String.valueOf(time));
+                        urgent.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if ((time + (5 * 60 * 1000)) > System.currentTimeMillis()) {
+                                    long timer = (time + (5 * 60 * 1000)) - System.currentTimeMillis();
+                                    Date date = new Date(timer);
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+                                    String newtimer = simpleDateFormat.format(date);
+                                    Toast.makeText(getActivity(), "You may send an urgent notification after 5 minutes! " + newtimer + " left!", Toast.LENGTH_SHORT).show();
+                                } else {
+
+                                    //Alert dialog
+                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                    alertDialog.setCancelable(false);
+                                    alertDialog.setTitle("Send an urgent notification?");
+                                    alertDialog.setMessage("An urgent notification of your request will be sent to Marikina City Rescue 161. Send?");
+                                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //Do nothing
+                                        }
+                                    });
+                                    alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            urgentFlag();
+                                           /* urgent.setEnabled(false);
+                                            urgent.setVisibility(View.INVISIBLE);
+                                            newrequesttv.setText("You sent an urgent notification");
+                                            newrequesttv.setTextColor(Color.GREEN);*/
+                                        }
+                                    });
+                                    alertDialog.show();
+                                }
+
+                            }
+                        });
+                    }
+                    else{
+                        setRequestFragment();
+                    }
                 }
                 else{
                     setRequestFragment();
@@ -222,7 +228,7 @@ public class NewRescueRequest extends Fragment {
         SetRequestFragment setRequestFragment = new SetRequestFragment();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, setRequestFragment);
-        fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 }

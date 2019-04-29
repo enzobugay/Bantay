@@ -64,6 +64,8 @@ public class DeployedRescueRequest extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         requestfirstname = getView().findViewById(R.id.deployedrequestfirstname);
@@ -84,9 +86,7 @@ public class DeployedRescueRequest extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 count++;
 
-                if(count >= dataSnapshot.getChildrenCount()){
-                    progressDialog.dismiss();
-                }
+
             }
 
             @Override
@@ -115,15 +115,22 @@ public class DeployedRescueRequest extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.exists()) {
-                    RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
-                    requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
-                    requestcontactnumber.setText(requestEntries.getRequestContactNumber());
-                    requestlocation.setText(requestEntries.getRequestLocation());
-                    requestlandmarks.setText(requestEntries.getRequestLandmarks());
-                    requestpax.setText(requestEntries.getRequestPax());
-                    requestspecification.setText(requestEntries.getRequestSpecific());
-                    allvul = dataSnapshot.child("allVulnerability").getValue().toString();
-                    requestvulnerability.setText(allvul);
+                    if (count >= dataSnapshot.getChildrenCount()) {
+                        progressDialog.dismiss();
+
+                        RequestEntries requestEntries = dataSnapshot.getValue(RequestEntries.class);
+                        requestfirstname.setText(requestEntries.getRequestFirstName() + " " + requestEntries.getRequestLastName());
+                        requestcontactnumber.setText(requestEntries.getRequestContactNumber());
+                        requestlocation.setText(requestEntries.getRequestLocation());
+                        requestlandmarks.setText(requestEntries.getRequestLandmarks());
+                        requestpax.setText(requestEntries.getRequestPax());
+                        requestspecification.setText(requestEntries.getRequestSpecific());
+                        allvul = dataSnapshot.child("allVulnerability").getValue().toString();
+                        requestvulnerability.setText(allvul);
+                    }
+                    else{
+                        setRequestFragment();
+                    }
                 }
                 else{
                     setRequestFragment();
