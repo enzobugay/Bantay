@@ -538,9 +538,9 @@ public class RequestFragment extends Fragment {
         else if(rlocation.isEmpty()){
             Toast.makeText(getActivity(), "No location provided, please refresh location", Toast.LENGTH_SHORT).show();
         }
-       /* else if(!rlocation.isEmpty() && !rlocation.toLowerCase().contains("marikina")){
+        else if(!rlocation.isEmpty() && !rlocation.toLowerCase().contains("marikina")){
             Toast.makeText(getActivity(), "You cannot send a request outside Marikina City!", Toast.LENGTH_SHORT).show();
-        }*/
+        }
         else{
             result = true;
         }
@@ -574,6 +574,21 @@ public class RequestFragment extends Fragment {
         databaseReference.child(firebaseAuth.getUid()).child("notPriority").setValue(notpriority);
         databaseReference.child(firebaseAuth.getUid()).child("receivedTimestamp").setValue("");
         databaseReference.child(firebaseAuth.getUid()).child("allVulnerability").setValue(allvul);
+
+
+        //FOR STRESS TEST
+
+        /*String key = databaseReference.push().getKey();
+        databaseReference.child(key).setValue(requestEntries);
+        //Child and Values not included in RequestEntries.class
+        databaseReference.child(key).child("requestTimestamp").setValue(ServerValue.TIMESTAMP);
+        databaseReference.child(key).child("requestDateTimeDeployed").setValue("");
+        databaseReference.child(key).child("requestDateTimeRescued").setValue("");
+        databaseReference.child(key).child("urgentFlag").setValue("0");
+        databaseReference.child(key).child("rescueTeam").setValue("");
+        databaseReference.child(key).child("notPriority").setValue(notpriority);
+        databaseReference.child(key).child("receivedTimestamp").setValue("");
+        databaseReference.child(key).child("allVulnerability").setValue(allvul);*/
 
     }
 

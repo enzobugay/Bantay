@@ -1,6 +1,7 @@
 package com.example.bantay.bantay;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.annotation.NonNull;
@@ -33,11 +34,16 @@ public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        SharedPreferences alertflag = getSharedPreferences("AlertFlag", MODE_PRIVATE);
+        String flag = alertflag.getString("Flag", "");
+
+        SharedPreferences ackflag = getSharedPreferences("AckFlag", MODE_PRIVATE);
+        String flagb = ackflag.getString("Flag", "");
 
         //fragment tabs
         frameLayout = (FrameLayout)findViewById(R.id.frame_nav);
@@ -50,7 +56,14 @@ public class HomeActivity extends AppCompatActivity {
         accountFragment = new AccountFragment();
 
         //default fragment
-        setFragment(mapFragment);
+        if(flag.equals("true")){
+            setFragment(cctvFragment);
+        }
+        else if(flagb.equals("true")){
+            setFragment(setRequestFragment);
+        }else {
+            setFragment(mapFragment);
+        }
         BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_nav);
         BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
 

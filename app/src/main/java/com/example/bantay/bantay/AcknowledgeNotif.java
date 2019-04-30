@@ -2,6 +2,7 @@ package com.example.bantay.bantay;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +27,17 @@ public class AcknowledgeNotif extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(user != null){
+
+                    SharedPreferences ackflag = getSharedPreferences("AckFlag", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = ackflag.edit();
+                    editor.putString("Flag", "true");
+                    editor.apply();
+
+                    SharedPreferences alertflag = getSharedPreferences("AlertFlag", MODE_PRIVATE);
+                    SharedPreferences.Editor editorb = alertflag.edit();
+                    editorb.putString("Flag", "false");
+                    editorb.apply();
+
                     finish();
                     startActivity(new Intent(AcknowledgeNotif.this, MainActivity.class));
                 }

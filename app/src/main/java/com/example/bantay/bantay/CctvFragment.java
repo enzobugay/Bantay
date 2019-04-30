@@ -2,7 +2,9 @@ package com.example.bantay.bantay;
 
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -48,6 +50,12 @@ public class CctvFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_cctv, container, false);
+
+        SharedPreferences ackflag = this.getActivity().getSharedPreferences("AlertFlag", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = ackflag.edit();
+        editor.putString("Flag", "false");
+        editor.apply();
+
         return view;
     }
 
