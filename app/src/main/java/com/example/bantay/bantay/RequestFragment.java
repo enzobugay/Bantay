@@ -575,21 +575,6 @@ public class RequestFragment extends Fragment {
         databaseReference.child(firebaseAuth.getUid()).child("receivedTimestamp").setValue("");
         databaseReference.child(firebaseAuth.getUid()).child("allVulnerability").setValue(allvul);
 
-
-        //FOR STRESS TEST
-
-        /*String key = databaseReference.push().getKey();
-        databaseReference.child(key).setValue(requestEntries);
-        //Child and Values not included in RequestEntries.class
-        databaseReference.child(key).child("requestTimestamp").setValue(ServerValue.TIMESTAMP);
-        databaseReference.child(key).child("requestDateTimeDeployed").setValue("");
-        databaseReference.child(key).child("requestDateTimeRescued").setValue("");
-        databaseReference.child(key).child("urgentFlag").setValue("0");
-        databaseReference.child(key).child("rescueTeam").setValue("");
-        databaseReference.child(key).child("notPriority").setValue(notpriority);
-        databaseReference.child(key).child("receivedTimestamp").setValue("");
-        databaseReference.child(key).child("allVulnerability").setValue(allvul);*/
-
     }
 
     //Go to NewRescueRequest fragment
