@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
 
         //Don't login rescue users
-        if(useremail.lastIndexOf("rescue") >= 0) // String user email that should not login
+        if(useremail.lastIndexOf("bantayrescue@gmail.com") >= 0) // String user email that should not login
         {
             progressDialog.dismiss();
             Toast.makeText(MainActivity.this, "Rescue Login Failed", Toast.LENGTH_SHORT).show();
