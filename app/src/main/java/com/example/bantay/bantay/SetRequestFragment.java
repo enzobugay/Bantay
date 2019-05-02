@@ -59,7 +59,7 @@ public class SetRequestFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RequestFragment requestFragment = (RequestFragment) getChildFragmentManager().findFragmentById(R.id.request);
+        SetRequestFragment setrequestFragment = (SetRequestFragment) getChildFragmentManager().findFragmentById(R.id.setrequestfragment);
 
         if(!Connection()){
             buildDialog().show();
