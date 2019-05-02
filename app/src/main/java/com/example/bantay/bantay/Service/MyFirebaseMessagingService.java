@@ -83,6 +83,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationBuilder.setContentTitle(title);
             notificationBuilder.setContentText(body);
             notificationBuilder.setVibrate(new long[]{500, 1000, 500, 1000, 500, 1000});
+            notificationBuilder.setSound(alarmsound);
 
             if (title.toLowerCase().contains("1")) {
                 notificationBuilder.setContentIntent(pendingIntent);
