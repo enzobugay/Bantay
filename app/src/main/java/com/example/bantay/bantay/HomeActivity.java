@@ -45,6 +45,12 @@ public class HomeActivity extends AppCompatActivity {
         SharedPreferences ackflag = getSharedPreferences("AckFlag", MODE_PRIVATE);
         String flagb = ackflag.getString("Flag", "");
 
+        /*SharedPreferences mapflag = getSharedPreferences("MapFlag", MODE_PRIVATE);
+        String flagc = ackflag.getString("Flag", "");*/
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_nav);
+        BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
+
         //fragment tabs
         frameLayout = (FrameLayout)findViewById(R.id.frame_nav);
         bottom_nav = (BottomNavigationView)findViewById(R.id.bottom_nav);
@@ -57,16 +63,19 @@ public class HomeActivity extends AppCompatActivity {
 
         //default fragment
         if(flag.equals("true")){
+            bottomNavigationView.setSelectedItemId(R.id.nav_cctv);
             setFragment(cctvFragment);
         }
         else if(flagb.equals("true")){
+            bottomNavigationView.setSelectedItemId(R.id.nav_request);
             setFragment(setRequestFragment);
         }else {
             setFragment(mapFragment);
         }
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_nav);
-        BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
 
+       /*if(flagc.equals("true")){
+            bottomNavigationView.setSelectedItemId(R.id.nav_map);
+        }*/
 
         bottom_nav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

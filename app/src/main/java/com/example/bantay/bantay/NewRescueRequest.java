@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
@@ -42,6 +43,7 @@ public class NewRescueRequest extends Fragment {
 
     public TextView requestfirstname, requestcontactnumber, requestlocation, requestlandmarks,
             requestpax, requestvulnerability, requestspecification, newrequesttv;
+    public Long time;
     public Button urgent;
     public String urgentflag, notpriority, allvul;
     public FirebaseAuth firebaseAuth;
@@ -145,7 +147,8 @@ public class NewRescueRequest extends Fragment {
                         urgentflag = (String) dataSnapshot.child("urgentFlag").getValue();
                         allvul = (String) dataSnapshot.child("allVulnerability").getValue();
                         requestvulnerability.setText(allvul);
-                        final long time = (long) dataSnapshot.child("requestTimestamp").getValue();
+                        time = (Long) dataSnapshot.child("requestTimestamp").getValue();
+
 
                         Log.d("urgentbutton", urgentflag);
                         if (urgentflag.equals("1")) {

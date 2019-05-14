@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -107,6 +108,8 @@ public class RequestFragment extends Fragment {
     String provider;
     double dalat,dalng;
 
+    private BottomNavigationView bottom_nav;
+
     int count = 0;
     public ProgressDialog progressDialog;
 
@@ -158,6 +161,7 @@ public class RequestFragment extends Fragment {
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 setMapFragment();
             }
         });
@@ -169,6 +173,12 @@ public class RequestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RequestFragment requestFragment = (RequestFragment) getChildFragmentManager().findFragmentById(R.id.request);
+
+        /*SharedPreferences mapflag = this.getActivity().getSharedPreferences("MapFlag", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mapflag.edit();
+        editor.putString("Flag", "false");
+        editor.apply();*/
+
         loadEntries();
         if(isMapsEnabled()) {
             if (mLocationPermissionsGranted) {
@@ -483,10 +493,17 @@ public class RequestFragment extends Fragment {
                     medical = "Medical Conditions  ";
                     rmedical = "true";
                     notvulnerable = "false";
+                    requestspecific.setEnabled(true);
+                    requestspecific.setFocusableInTouchMode(true);
                 }else{
                     rmedical = "false";
                     notvulnerable = "true";
                     medical = "";
+                    if(!requestother.isChecked()){
+                        requestspecific.setEnabled(false);
+                        requestspecific.setFocusable(false);
+                        requestspecific.setText(null);
+                    }
                 }
             }
         });
@@ -498,10 +515,17 @@ public class RequestFragment extends Fragment {
                     other = "Other";
                     rother = "true";
                     notvulnerable = "false";
+                    requestspecific.setEnabled(true);
+                    requestspecific.setFocusableInTouchMode(true);
                 }else{
                     rother = "false";
                     notvulnerable = "true";
                     other = "";
+                    if(!requestmedical.isChecked()) {
+                        requestspecific.setEnabled(false);
+                        requestspecific.setFocusable(false);
+                        requestspecific.setText(null);
+                    }
                 }
             }
         });
@@ -588,6 +612,12 @@ public class RequestFragment extends Fragment {
 
     //Go to MapFragment fragment
     public void setMapFragment(){
+
+        /*SharedPreferences mapflag = this.getActivity().getSharedPreferences("MapFlag", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mapflag.edit();
+        editor.putString("Flag", "true");
+        editor.apply();*/
+
         MapFragment mapFragment = new MapFragment();
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_nav, mapFragment);
