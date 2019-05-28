@@ -46,6 +46,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 else{
                     //Reset method
                     progressDialog.setMessage("Please wait...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
 
                     firebaseAuth.sendPasswordResetEmail(useremail).addOnCompleteListener(new OnCompleteListener<Void>() {

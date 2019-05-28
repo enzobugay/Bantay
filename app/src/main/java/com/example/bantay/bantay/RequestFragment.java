@@ -152,7 +152,7 @@ public class RequestFragment extends Fragment {
                     });
                     alertDialog.show();
                 }
-
+                //reports();
             }
         });
 
@@ -302,7 +302,7 @@ public class RequestFragment extends Fragment {
                 String response;
                 HttpDataHandler http = new HttpDataHandler();
                 String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=%.4f&lon=%.4f&format=json",lat,lng);
-                //String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=14.6462&lon=121.0944&format=json",lat,lng);
+                //String url = String.format("https://us1.locationiq.com/v1/reverse.php?key=0b3a97d7f1f654&lat=14.623230&lon=121.089296&format=json",lat,lng);
                 response = http.GetHTTPData(url);
                 Log.d("testpandebug,requestbg", response);
                 Log.d("testpandebug,requestbg", url);
@@ -545,6 +545,8 @@ public class RequestFragment extends Fragment {
         rlocation = requestlocation.getText().toString();
 
 
+
+
         if (rlandmarks.isEmpty() || rpax.isEmpty()) {
             Log.d("BOOLEAN VALIDATE", "IF WORKING");
             Toast.makeText(getActivity(), "Please fill up required fields", Toast.LENGTH_SHORT).show();
@@ -636,5 +638,36 @@ public class RequestFragment extends Fragment {
        // bottomNavigationView.getMenu().findItem(R.id.nav_map).setChecked(true);
     }
 
+   /* private void reports(){
+
+
+        String path = "/Rescue Requests/Reports"; //Database path
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference(path);
+
+        String key = databaseReference.push().getKey();
+
+        databaseReference.child(key).child("allVulnerability").setValue("");
+        databaseReference.child(key).child("notPriority").setValue("false");
+        databaseReference.child(key).child("receivedTimestamp").setValue("");
+        databaseReference.child(key).child("requestContactNumber").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestDateTimeDeployed").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestDateTimeRescued").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestFirstName").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestInfant").setValue("false");
+        databaseReference.child(key).child("requestLandmarks").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestLastName").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestLocation").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestMedical").setValue("false");
+        databaseReference.child(key).child("requestOther").setValue("false");
+        databaseReference.child(key).child("requestPax").setValue("TO CHANGE");
+        databaseReference.child(key).child("requestPwd").setValue("false");
+        databaseReference.child(key).child("requestSenior").setValue("false");
+        databaseReference.child(key).child("requestSpecific").setValue("");
+        databaseReference.child(key).child("requestTimestamp").setValue("TO CHANGE");
+        databaseReference.child(key).child("rescueTeam").setValue("Alpha");
+        databaseReference.child(key).child("urgentFlag").setValue("0");
+
+    }*/
 
 }

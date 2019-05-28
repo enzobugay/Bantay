@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
     private void validate(final String useremail, String userpassword){
 
         progressDialog.setMessage("Logging in...");
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
         //Don't login rescue users

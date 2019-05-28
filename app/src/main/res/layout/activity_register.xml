@@ -52,7 +52,8 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:paddingBottom="50dp">
 
 
             <EditText
@@ -231,12 +232,12 @@
                 android:id="@+id/createcreate"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
+                android:layout_below="@+id/createpassword"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="99dp"
-                android:layout_marginTop="379dp"
-                android:layout_marginEnd="99dp"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginEnd="100dp"
                 android:layout_marginBottom="5dp"
                 android:background="@android:color/holo_blue_light"
                 android:text="Create Account"
